@@ -1,0 +1,17 @@
+{
+    "name": "Travel",
+    "version": "1.0.0",
+    "description": "Bổ sung tính năng ngành du lịch: Điểm đến, Tour, lịch trình, lịch khởi hành, form yêu cầu báo giá.",
+    "author": "Jankx",
+    "extension_id": "travel",
+    "context": ["admin", "frontend", "rest", "ajax"],
+    "caller": {
+        "file": "TravelExtension.php",
+        "class": "Jankx\\Extensions\\Travel\\TravelExtension",
+        "method": "init"
+    },
+    "requirements": {
+        "php": ">=7.4"
+    },
+    "auto_activate": true
+}

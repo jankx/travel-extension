@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "jankx-travel/booking-form",
+    "title": "Tour Booking Request Form",
+    "category": "jankx",
+    "icon": "email-alt",
+    "description": "Form yêu cầu báo giá tour — không thanh toán online, chỉ gửi yêu cầu tư vấn.",
+    "textdomain": "jankx",
+    "usesContext": ["postId", "postType"],
+    "supports": {
+        "html": false,
+        "align": ["wide", "full"],
+        "spacing": {
+            "margin": true,
+            "padding": true
+        },
+        "color": {
+            "background": true,
+            "text": true
+        }
+    },
+    "attributes": {
+        "title": {
+            "type": "string",
+            "default": "Yêu cầu báo giá"
+        }
+    },
+    "render": "file:./render.php"
+}

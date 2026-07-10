@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "jankx-travel/tour-search",
+    "title": "Tour Search & Filter",
+    "category": "jankx",
+    "icon": "search",
+    "description": "Bộ lọc tìm kiếm tour theo khu vực, loại tour, khoảng giá và thời lượng.",
+    "textdomain": "jankx",
+    "supports": {
+        "html": false,
+        "align": ["wide", "full"],
+        "spacing": {
+            "margin": true,
+            "padding": true
+        },
+        "color": {
+            "background": true,
+            "text": true
+        }
+    },
+    "attributes": {
+        "showPriceFilter": {
+            "type": "boolean",
+            "default": true
+        },
+        "showDurationFilter": {
+            "type": "boolean",
+            "default": true
+        }
+    },
+    "render": "file:./render.php"
+}

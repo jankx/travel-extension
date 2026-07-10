@@ -1,0 +1,29 @@
+.jankx-travel-form-table th {
+    width: 220px;
+}
+.jankx-travel-repeater-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.jankx-travel-itinerary-row {
+    flex-direction: column;
+    align-items: stretch;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    padding: 10px;
+    background: #fff;
+    position: relative;
+}
+.jankx-travel-itinerary-row .jankx-travel-remove-row {
+    align-self: flex-end;
+}
+.jankx-travel-add-row {
+    margin-top: 6px;
+}
+.jankx-travel-remove-row {
+    line-height: 1;
+    color: #b32d2e;
+}

@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "jankx-travel/departure-calendar",
+    "title": "Departure Calendar",
+    "category": "jankx",
+    "icon": "calendar-alt",
+    "description": "Danh sách các ngày khởi hành sắp tới của tour này (hoặc toàn bộ tour).",
+    "textdomain": "jankx",
+    "usesContext": ["postId", "postType"],
+    "supports": {
+        "html": false,
+        "align": ["wide", "full"],
+        "spacing": {
+            "margin": true,
+            "padding": true
+        }
+    },
+    "attributes": {
+        "limit": {
+            "type": "number",
+            "default": 6
+        },
+        "showPastDates": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "render": "file:./render.php"
+}
