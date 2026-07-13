@@ -85,6 +85,42 @@ class TravelExtension extends AbstractExtension
 
         // Register Gutenberg blocks shipped with this extension.
         add_action('init', [$this, 'register_blocks']);
+
+        // Frontend styles for the extension's blocks.
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
+
+        // Editor script so the block editor knows how to render/select these
+        // dynamic (server-rendered) blocks, instead of showing the
+        // "Your site doesn't include support for this block" placeholder.
+        add_action('enqueue_block_editor_assets', [$this, 'enqueue_editor_assets']);
+    }
+
+    public function enqueue_editor_assets(): void
+    {
+        wp_enqueue_script(
+            'jankx-travel-editor',
+            $this->get_extension_url() . '/assets/editor.js',
+            ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-server-side-render', 'wp-i18n'],
+            '1.0.0',
+            true
+        );
+
+        wp_enqueue_style(
+            'jankx-travel-frontend',
+            $this->get_extension_url() . '/assets/frontend.css',
+            [],
+            '1.0.0'
+        );
+    }
+
+    public function enqueue_frontend_assets(): void
+    {
+        wp_enqueue_style(
+            'jankx-travel-frontend',
+            $this->get_extension_url() . '/assets/frontend.css',
+            [],
+            '1.0.0'
+        );
     }
 
     public function register_blocks(): void

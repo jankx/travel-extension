@@ -45,5 +45,9 @@ class TourPostType
             'rewrite'      => ['slug' => 'tour', 'with_front' => false],
             'show_in_menu' => true,
         ]);
+
+        // Allow this CPT to use the theme's block templates (templates/single-tour.html, archive-tour.html)
+        // instead of falling back to the legacy PageRenderer.
+        add_post_type_support(self::POST_TYPE, 'block-templates');
     }
 }

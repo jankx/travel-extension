@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "jankx-travel/tour-meta",
+    "title": "Tour Meta (Giá, Thời lượng, Đánh giá)",
+    "category": "jankx",
+    "icon": "tag",
+    "description": "Hiển thị giá, thời lượng và đánh giá sao của tour. Dùng trong post-template của archive/query.",
+    "textdomain": "jankx",
+    "usesContext": ["postId", "postType"],
+    "supports": {
+        "html": false,
+        "spacing": {
+            "margin": true,
+            "padding": true
+        }
+    },
+    "attributes": {
+        "showPrice": {
+            "type": "boolean",
+            "default": true
+        },
+        "showDuration": {
+            "type": "boolean",
+            "default": true
+        },
+        "showRating": {
+            "type": "boolean",
+            "default": true
+        }
+    },
+    "render": "file:./render.php"
+}

@@ -15,6 +15,29 @@ class TourQuery
     public function register(): void
     {
         add_action('pre_get_posts', [$this, 'apply_filters']);
+        add_filter('query_loop_block_query_vars', [$this, 'filter_destination_tours_query'], 10, 3);
+    }
+
+    /**
+     * On a single "destination" page, restrict the "Các tour tại điểm đến này"
+     * Query Loop block (queryId 1) to tours whose _tour_destination_id meta
+     * points at the current destination.
+     */
+    public function filter_destination_tours_query(array $query, $block, $page): array
+    {
+        $query_id = $block->context['queryId'] ?? null;
+        $post_type = $block->context['query']['postType'] ?? '';
+
+        if ($query_id === 1 && $post_type === TourPostType::POST_TYPE && is_singular('destination')) {
+            $query['meta_query'] = [
+                [
+                    'key'   => '_tour_destination_id',
+                    'value' => get_queried_object_id(),
+                ],
+            ];
+        }
+
+        return $query;
     }
 
     public function apply_filters(\WP_Query $query): void

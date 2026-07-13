@@ -1,0 +1,291 @@
+.jankx-tour-search,
+.jankx-departure-calendar,
+.jankx-itinerary,
+.jankx-travel-booking-form {
+    --jankx-travel-accent: var(--wp--preset--color--primary, #0f766e);
+    --jankx-travel-text: var(--wp--preset--color--contrast, #1f2937);
+    --jankx-travel-muted: var(--wp--preset--color--grey-text, #6b7280);
+    --jankx-travel-border: #e5e7eb;
+    --jankx-travel-surface: var(--wp--preset--color--base, #ffffff);
+}
+
+/* Tour search & filter */
+.jankx-tour-search__form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    background: var(--jankx-travel-surface);
+    border: 1px solid var(--jankx-travel-border);
+    border-radius: 12px;
+    padding: 20px;
+}
+.jankx-tour-search__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 160px;
+}
+.jankx-tour-search__field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--jankx-travel-muted);
+}
+.jankx-tour-search__field select,
+.jankx-tour-search__field input {
+    padding: 10px 12px;
+    border: 1px solid var(--jankx-travel-border);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--jankx-travel-text);
+}
+.jankx-tour-search__actions {
+    flex: 0 0 auto;
+}
+.jankx-tour-search__submit {
+    background: var(--jankx-travel-accent);
+    color: #ffffff;
+    border: 0;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.jankx-tour-search__submit:hover {
+    opacity: 0.9;
+}
+
+/* Departure calendar */
+.jankx-departure-calendar__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+.jankx-departure-calendar__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--jankx-travel-border);
+    border-left: 3px solid var(--jankx-travel-accent);
+    border-radius: 8px;
+    background: var(--jankx-travel-surface);
+}
+.jankx-departure-calendar__date {
+    font-weight: 700;
+    color: var(--jankx-travel-text);
+}
+.jankx-departure-calendar__tour {
+    color: var(--jankx-travel-accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+.jankx-departure-calendar__slots {
+    font-size: 13px;
+    color: var(--jankx-travel-muted);
+    margin-left: auto;
+}
+.jankx-departure-calendar__note {
+    font-size: 13px;
+    color: var(--jankx-travel-muted);
+    width: 100%;
+}
+.jankx-departure-calendar__empty {
+    color: var(--jankx-travel-muted);
+    font-style: italic;
+}
+
+/* Itinerary accordion */
+.jankx-itinerary {
+    display: grid;
+    gap: 10px;
+}
+.jankx-itinerary__day {
+    border: 1px solid var(--jankx-travel-border);
+    border-radius: 8px;
+    background: var(--jankx-travel-surface);
+    padding: 4px 0;
+}
+.jankx-itinerary__day-title {
+    cursor: pointer;
+    padding: 14px 18px;
+    font-weight: 700;
+    color: var(--jankx-travel-text);
+    list-style: none;
+}
+.jankx-itinerary__day-title::-webkit-details-marker {
+    display: none;
+}
+.jankx-itinerary__day-title::before {
+    content: "+";
+    display: inline-block;
+    width: 18px;
+    color: var(--jankx-travel-accent);
+    font-weight: 900;
+}
+.jankx-itinerary__day[open] > .jankx-itinerary__day-title::before {
+    content: "\2212";
+}
+.jankx-itinerary__day-description {
+    padding: 0 18px 16px 36px;
+    color: var(--jankx-travel-muted);
+    line-height: 1.7;
+}
+
+/* Booking request form */
+.jankx-travel-booking-form__title {
+    margin: 0 0 16px;
+    color: var(--jankx-travel-text);
+}
+.jankx-travel-booking-form__form {
+    display: grid;
+    gap: 14px;
+    background: var(--jankx-travel-surface);
+    border: 1px solid var(--jankx-travel-border);
+    border-radius: 12px;
+    padding: 24px;
+}
+.jankx-travel-booking-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+.jankx-travel-booking-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.jankx-travel-booking-form__field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--jankx-travel-muted);
+}
+.jankx-travel-booking-form__field input,
+.jankx-travel-booking-form__field textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--jankx-travel-border);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--jankx-travel-text);
+    font-family: inherit;
+}
+.jankx-travel-booking-form__submit {
+    justify-self: start;
+    background: var(--jankx-travel-accent);
+    color: #ffffff;
+    border: 0;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.jankx-travel-booking-form__submit:hover {
+    opacity: 0.9;
+}
+.jankx-travel-booking-status {
+    margin: 0;
+    font-size: 14px;
+}
+.jankx-travel-booking-status.is-success {
+    color: #15803d;
+}
+.jankx-travel-booking-status.is-error {
+    color: #b91c1c;
+}
+
+@media (max-width: 640px) {
+    .jankx-travel-booking-form__row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tour meta (price, duration, rating) */
+.jankx-tour-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+.jankx-tour-meta__price {
+    font-weight: 800;
+    color: var(--jankx-travel-accent);
+    font-size: 18px;
+}
+.jankx-tour-meta__price-label {
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--jankx-travel-muted);
+    margin-right: 3px;
+}
+.jankx-tour-meta__duration {
+    padding: 3px 10px;
+    border-radius: 100px;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--jankx-travel-accent);
+    font-weight: 600;
+    font-size: 12px;
+}
+.jankx-tour-meta__rating {
+    color: #d97706;
+    font-weight: 700;
+    font-size: 13px;
+    margin-left: auto;
+}
+
+/* Editor-only preview label for Travel blocks (see editor.js) */
+.jankx-travel-editor-preview {
+    position: relative;
+}
+.jankx-travel-editor-label {
+    position: absolute;
+    top: -22px;
+    left: 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--jankx-travel-accent, #3b82f6);
+    background: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+/* Tour archive card */
+.wp-block-post-template.is-layout-grid > * {
+    width: 100%;
+    max-width: 100%;
+}
+.jankx-tour-card {
+    width: 100%;
+    border-color: var(--jankx-travel-border) !important;
+    background: var(--jankx-travel-surface);
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.jankx-tour-card .wp-block-post-featured-image {
+    background-color: var(--jankx-travel-border);
+    margin: 0;
+}
+.jankx-tour-card .wp-block-post-featured-image img,
+.jankx-tour-card .wp-block-post-featured-image svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.jankx-tour-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+    .jankx-tour-card {
+        transition: none;
+    }
+    .jankx-tour-card:hover {
+        transform: none;
+    }
+}

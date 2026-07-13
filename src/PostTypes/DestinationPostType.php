@@ -45,5 +45,9 @@ class DestinationPostType
             'rewrite'      => ['slug' => 'diem-den', 'with_front' => false],
             'show_in_menu' => true,
         ]);
+
+        // Allow this CPT to use the theme's block templates (templates/single-destination.html, archive-destination.html)
+        // instead of falling back to the legacy PageRenderer.
+        add_post_type_support(self::POST_TYPE, 'block-templates');
     }
 }
