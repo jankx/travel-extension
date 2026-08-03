@@ -13,14 +13,5 @@
     "requirements": {
         "php": ">=7.4"
     },
-    "dependencies": {
-        "extensions": [
-            "my-account",
-            "custom-login-page",
-            "user-credits",
-            "coupon-system",
-            "payment-system"
-        ]
-    },
     "auto_activate": true
 }
