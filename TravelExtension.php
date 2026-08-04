@@ -83,8 +83,10 @@ class TravelExtension extends AbstractExtension
         // Tour archive filtering (region, category, price, duration).
         (new TourQuery())->register();
 
-        // Register Gutenberg blocks shipped with this extension.
-        add_action('init', [$this, 'register_blocks']);
+        // Register Gutenberg blocks on frontend only (admin uses client-side JS)
+        if (!is_admin()) {
+            $this->register_blocks();
+        }
 
         // Frontend styles for the extension's blocks.
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
@@ -97,6 +99,17 @@ class TravelExtension extends AbstractExtension
 
     public function enqueue_editor_assets(): void
     {
+        $screen = get_current_screen();
+        if (!$screen) {
+            return;
+        }
+
+        // Only load on pages/posts or travel-related screens
+        $allowed = ['post', 'page', 'edit'];
+        if (!in_array($screen->base, $allowed) && strpos($screen->id, 'jankx-travel') === false) {
+            return;
+        }
+
         wp_enqueue_script(
             'jankx-travel-editor',
             $this->get_extension_url() . '/assets/editor.js',
@@ -131,8 +144,22 @@ class TravelExtension extends AbstractExtension
         }
 
         foreach (glob($blocksDir . '/*', GLOB_ONLYDIR) as $blockDir) {
-            if (file_exists($blockDir . '/block.json')) {
-                register_block_type($blockDir);
+            if (!file_exists($blockDir . '/block.json')) {
+                continue;
+            }
+
+            $blockJson = json_decode(file_get_contents($blockDir . '/block.json'), true);
+            $blockName = $blockJson['name'] ?? '';
+            
+            $blockClass = null;
+            if ($blockName === 'jankx/account-tab-orders') {
+                $blockClass = new \Jankx\Extensions\Travel\Blocks\AccountTabOrdersBlock($blockDir);
+            }
+
+            if ($blockClass) {
+                $blockClass->setBlockPath($blockDir);
+                $blockClass->boot();
+                $blockClass->register();
             }
         }
     }
