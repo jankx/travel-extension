@@ -83,10 +83,8 @@ class TravelExtension extends AbstractExtension
         // Tour archive filtering (region, category, price, duration).
         (new TourQuery())->register();
 
-        // Register Gutenberg blocks on frontend only (admin uses client-side JS)
-        if (!is_admin()) {
-            $this->register_blocks();
-        }
+        // Always register blocks so ServerSideRender works in editor
+        $this->register_blocks();
 
         // Frontend styles for the extension's blocks.
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
