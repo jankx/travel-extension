@@ -11,8 +11,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$regions = get_terms([
-    'taxonomy'   => 'destination_region',
+$destinations = get_terms([
+    'taxonomy'   => 'destination',
     'hide_empty' => false,
 ]);
 $categories = get_terms([
@@ -20,10 +20,10 @@ $categories = get_terms([
     'hide_empty' => false,
 ]);
 
-$current_region   = isset($_GET['tour_region']) ? sanitize_text_field($_GET['tour_region']) : '';
-$current_category = isset($_GET['tour_category']) ? sanitize_text_field($_GET['tour_category']) : '';
-$current_price_max = isset($_GET['tour_price_max']) ? absint($_GET['tour_price_max']) : '';
-$current_days      = isset($_GET['tour_duration_days']) ? absint($_GET['tour_duration_days']) : '';
+$current_destination = isset($_GET['tour_destination']) ? sanitize_text_field($_GET['tour_destination']) : '';
+$current_category    = isset($_GET['tour_category']) ? sanitize_text_field($_GET['tour_category']) : '';
+$current_price_max   = isset($_GET['tour_price_max']) ? absint($_GET['tour_price_max']) : '';
+$current_days        = isset($_GET['tour_duration_days']) ? absint($_GET['tour_duration_days']) : '';
 
 $archive_url = get_post_type_archive_link('tour');
 $wrapper_attributes = get_block_wrapper_attributes(['class' => 'jankx-tour-search']);
@@ -31,12 +31,12 @@ $wrapper_attributes = get_block_wrapper_attributes(['class' => 'jankx-tour-searc
 <div <?php echo $wrapper_attributes; ?>>
     <form method="get" action="<?php echo esc_url($archive_url); ?>" class="jankx-tour-search__form">
         <div class="jankx-tour-search__field">
-            <label for="jankx-tour-region"><?php esc_html_e('Khu vực', 'jankx'); ?></label>
-            <select id="jankx-tour-region" name="tour_region">
-                <option value=""><?php esc_html_e('Tất cả khu vực', 'jankx'); ?></option>
-                <?php foreach ($regions as $region) : ?>
-                    <option value="<?php echo esc_attr($region->slug); ?>" <?php selected($current_region, $region->slug); ?>>
-                        <?php echo esc_html($region->name); ?>
+            <label for="jankx-tour-destination"><?php esc_html_e('Điểm đến', 'jankx'); ?></label>
+            <select id="jankx-tour-destination" name="tour_destination">
+                <option value=""><?php esc_html_e('Tất cả điểm đến', 'jankx'); ?></option>
+                <?php foreach ($destinations as $destination) : ?>
+                    <option value="<?php echo esc_attr($destination->slug); ?>" <?php selected($current_destination, $destination->slug); ?>>
+                        <?php echo esc_html($destination->name); ?>
                     </option>
                 <?php endforeach; ?>
             </select>

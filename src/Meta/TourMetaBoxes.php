@@ -3,6 +3,7 @@
 namespace Jankx\Extensions\Travel\Meta;
 
 use Jankx\Extensions\Travel\PostTypes\TourPostType;
+use Jankx\Extensions\Travel\Taxonomies\DestinationTaxonomy;
 
 /**
  * Admin meta boxes for the "tour" CPT: pricing, duration, departure dates
@@ -48,7 +49,6 @@ class TourMetaBoxes
             '_tour_duration_days' => 'Số ngày',
             '_tour_duration_nights' => 'Số đêm',
             '_tour_max_guests' => 'Số khách tối đa',
-            '_tour_destination_id' => 'ID điểm đến liên kết',
             '_tour_review_count' => 'Tổng số đánh giá',
         ];
         foreach ($int_keys as $key => $desc) {
@@ -250,14 +250,17 @@ class TourMetaBoxes
 
     public function render_destination_box(\WP_Post $post): void
     {
-        $selected = (int) get_post_meta($post->ID, '_tour_destination_id', true);
+        $selected = get_the_terms($post->ID, DestinationTaxonomy::TAXONOMY);
+        $selected_ids = $selected && !is_wp_error($selected)
+            ? wp_list_pluck($selected, 'term_id')
+            : [];
         $rating = get_post_meta($post->ID, '_tour_rating', true);
         $review_count = (int) get_post_meta($post->ID, '_tour_review_count', true);
-        $destinations = get_posts([
-            'post_type' => 'destination',
-            'posts_per_page' => -1,
-            'orderby' => 'title',
-            'order' => 'ASC',
+        $destinations = get_terms([
+            'taxonomy'   => DestinationTaxonomy::TAXONOMY,
+            'hide_empty' => false,
+            'orderby'    => 'name',
+            'order'      => 'ASC',
         ]);
         include __DIR__ . '/views/tour-destination.php';
     }
@@ -301,7 +304,12 @@ class TourMetaBoxes
         update_post_meta($post_id, '_tour_max_guests', absint($_POST['tour_max_guests'] ?? 0));
 
         // Destination & rating
-        update_post_meta($post_id, '_tour_destination_id', absint($_POST['tour_destination_id'] ?? 0));
+        $destination_ids = [];
+        if (!empty($_POST['tour_destination_id']) && is_array($_POST['tour_destination_id'])) {
+            $destination_ids = array_map('absint', $_POST['tour_destination_id']);
+            $destination_ids = array_values(array_filter($destination_ids));
+        }
+        wp_set_post_terms($post_id, $destination_ids, DestinationTaxonomy::TAXONOMY);
         $rating = isset($_POST['tour_rating']) ? (float) $_POST['tour_rating'] : 0;
         update_post_meta($post_id, '_tour_rating', max(0, min(5, $rating)));
         update_post_meta($post_id, '_tour_review_count', absint($_POST['tour_review_count'] ?? 0));

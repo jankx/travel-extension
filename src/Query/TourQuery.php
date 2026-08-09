@@ -4,11 +4,11 @@ namespace Jankx\Extensions\Travel\Query;
 
 use Jankx\Extensions\Travel\PostTypes\TourPostType;
 use Jankx\Extensions\Travel\Taxonomies\TourCategoryTaxonomy;
-use Jankx\Extensions\Travel\Taxonomies\DestinationRegionTaxonomy;
+use Jankx\Extensions\Travel\Taxonomies\DestinationTaxonomy;
 
 /**
  * Filters the main "tour" archive query using GET params submitted by the
- * Tour Search & Filter block: region, category, price range, duration.
+ * Tour Search & Filter block: destination, category, price range, duration.
  */
 class TourQuery
 {
@@ -19,20 +19,20 @@ class TourQuery
     }
 
     /**
-     * On a single "destination" page, restrict the "Các tour tại điểm đến này"
-     * Query Loop block (queryId 1) to tours whose _tour_destination_id meta
-     * points at the current destination.
+     * On a "destination" taxonomy archive page, restrict the "Các tour tại
+     * điểm đến này" Query Loop block (queryId 1) to the current term.
      */
     public function filter_destination_tours_query(array $query, $block, $page): array
     {
         $query_id = $block->context['queryId'] ?? null;
         $post_type = $block->context['query']['postType'] ?? '';
 
-        if ($query_id === 1 && $post_type === TourPostType::POST_TYPE && is_singular('destination')) {
-            $query['meta_query'] = [
+        if ($query_id === 1 && $post_type === TourPostType::POST_TYPE && is_tax(DestinationTaxonomy::TAXONOMY)) {
+            $query['tax_query'] = [
                 [
-                    'key'   => '_tour_destination_id',
-                    'value' => get_queried_object_id(),
+                    'taxonomy' => DestinationTaxonomy::TAXONOMY,
+                    'field'    => 'term_id',
+                    'terms'    => get_queried_object_id(),
                 ],
             ];
         }
@@ -51,11 +51,11 @@ class TourQuery
 
         $tax_query = [];
 
-        if (!empty($_GET['tour_region'])) {
+        if (!empty($_GET['tour_destination'])) {
             $tax_query[] = [
-                'taxonomy' => DestinationRegionTaxonomy::TAXONOMY,
+                'taxonomy' => DestinationTaxonomy::TAXONOMY,
                 'field'    => 'slug',
-                'terms'    => sanitize_text_field($_GET['tour_region']),
+                'terms'    => sanitize_text_field($_GET['tour_destination']),
             ];
         }
 

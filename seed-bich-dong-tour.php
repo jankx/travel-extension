@@ -6,7 +6,7 @@
  *   studio wp eval-file wp-content/themes/nibitour/extensions/travel/seed-bich-dong-tour.php
  *
  * Creates (or updates, if slug already exists):
- *  - 1 destination: Bích Động / Tràng An (Ninh Bình)
+ *  - 1 destination term: Bích Động / Tràng An (Ninh Bình)
  *  - 1 tour_category term: Trải nghiệm – Sông nước
  *  - 1 tour_category term: Tham quan
  *  - 1 tour post with all meta extracted from the design mockup
@@ -58,23 +58,13 @@ function _seed_post(array $args): int
     return $id;
 }
 
-// ── 1. Destination: Bích Động – Tràng An (Ninh Bình) ─────────────────────
+// ── 1. Destination term: Bích Động – Tràng An (Ninh Bình) ────────────────
 
-$destination_id = _seed_post([
-    'post_type' => 'destination',
-    'post_status' => 'publish',
-    'post_title' => 'Bích Động – Tràng An, Ninh Bình',
-    'post_name' => 'bich-dong-trang-an-ninh-binh',
-    'post_content' => 'Bích Động là một quần thể hang động đá vôi nằm trong Khu du lịch Tràng An – Di sản thiên nhiên thế giới tại Ninh Bình. Nơi đây nổi tiếng với hệ thống sông ngòi uốn lượn giữa những dãy núi đá vôi hùng vĩ, là điểm đến lý tưởng cho các tour chèo thuyền, khám phá hang động và trải nghiệm thiên nhiên.',
-    'post_excerpt' => 'Quần thể hang động và sông nước tuyệt đẹp tại Di sản thiên nhiên thế giới Tràng An, Ninh Bình.',
-]);
-
-if ($destination_id) {
-    update_post_meta($destination_id, '_destination_region', 'Ninh Bình');
-    update_post_meta($destination_id, '_destination_country', 'Việt Nam');
-    update_post_meta($destination_id, '_destination_coordinates', '20.2289° B, 105.9244° Đ');
-    _seed_log("Destination meta saved.");
-}
+$destination_id = _seed_term(
+    'Bích Động – Tràng An, Ninh Bình',
+    'destination',
+    'bich-dong-trang-an-ninh-binh'
+);
 
 // ── 2. Taxonomy terms ─────────────────────────────────────────────────────
 
@@ -88,13 +78,6 @@ $cat_tham_quan = _seed_term(
     'Tham quan',
     'tour_category',
     'tham-quan'
-);
-
-// Region taxonomy (destination_region)
-$region_ninh_binh = _seed_term(
-    'Ninh Bình',
-    'destination_region',
-    'ninh-binh'
 );
 
 // ── 3. The tour post ──────────────────────────────────────────────────────
@@ -148,7 +131,10 @@ update_post_meta($tour_id, '_tour_review_count', 30000);
 
 // ── 3c. Destination & meeting point ──────────────────────────────────────
 
-update_post_meta($tour_id, '_tour_destination_id', $destination_id);
+if ($destination_id) {
+    wp_set_post_terms($tour_id, [$destination_id], 'destination');
+    _seed_log("Assigned destination: Bích Động – Tràng An.");
+}
 // Meeting-point / departure is a new meta; registered below.
 update_post_meta($tour_id, '_tour_meeting_point', 'Vinh Hạ Long, Hội An – đường Yết Kiêu, Giao Phong, Hội An, Thăng Bình, Quảng Nam');
 
@@ -269,11 +255,6 @@ $cat_ids = array_filter([$cat_trai_nghiem, $cat_tham_quan]);
 if ($cat_ids) {
     wp_set_post_terms($tour_id, $cat_ids, 'tour_category');
     _seed_log("Assigned " . count($cat_ids) . " tour_category term(s).");
-}
-
-if ($region_ninh_binh) {
-    wp_set_post_terms($tour_id, [$region_ninh_binh], 'destination_region');
-    _seed_log("Assigned destination_region: Ninh Bình.");
 }
 
 // ── 4. register_meta() for the new keys ──────────────────────────────────

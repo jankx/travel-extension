@@ -1,22 +1,22 @@
 <?php
-/** @var int $selected */
+/** @var int[] $selected_ids */
 /** @var string $rating */
 /** @var int $review_count */
-/** @var \WP_Post[] $destinations */
+/** @var \WP_Term[] $destinations */
 if (!defined('ABSPATH')) {
     exit;
 }
 ?>
 <p>
     <label for="tour_destination_id"><strong><?php esc_html_e('Điểm đến', 'jankx'); ?></strong></label><br />
-    <select id="tour_destination_id" name="tour_destination_id" class="widefat">
-        <option value="0"><?php esc_html_e('— Chọn điểm đến —', 'jankx'); ?></option>
+    <select id="tour_destination_id" name="tour_destination_id[]" class="widefat" multiple size="6">
         <?php foreach ($destinations as $destination): ?>
-            <option value="<?php echo esc_attr($destination->ID); ?>" <?php selected($selected, $destination->ID); ?>>
-                <?php echo esc_html($destination->post_title); ?>
+            <option value="<?php echo esc_attr($destination->term_id); ?>" <?php selected(in_array((int) $destination->term_id, $selected_ids, true), true); ?>>
+                <?php echo esc_html($destination->name); ?>
             </option>
         <?php endforeach; ?>
     </select>
+    <span class="description"><?php esc_html_e('Giữ Ctrl (Cmd) để chọn nhiều điểm đến.', 'jankx'); ?></span>
 </p>
 <p>
     <label for="tour_rating"><strong><?php esc_html_e('Đánh giá (0-5 sao)', 'jankx'); ?></strong></label><br />

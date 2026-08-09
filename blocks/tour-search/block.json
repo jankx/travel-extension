@@ -5,7 +5,7 @@
     "title": "Tour Search & Filter",
     "category": "jankx",
     "icon": "search",
-    "description": "Bộ lọc tìm kiếm tour theo khu vực, loại tour, khoảng giá và thời lượng.",
+    "description": "Bộ lọc tìm kiếm tour theo điểm đến, loại tour, khoảng giá và thời lượng.",
     "textdomain": "jankx",
     "supports": {
         "html": false,
