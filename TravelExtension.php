@@ -6,6 +6,7 @@ use Jankx\Extensions\AbstractExtension;
 use Jankx\Extensions\Travel\PostTypes\DestinationPostType;
 use Jankx\Extensions\Travel\PostTypes\TourPostType;
 use Jankx\Extensions\Travel\PostTypes\BookingRequestPostType;
+use Jankx\Extensions\Travel\Products\TourProduct;
 use Jankx\Extensions\Travel\Taxonomies\TourCategoryTaxonomy;
 use Jankx\Extensions\Travel\Taxonomies\DestinationRegionTaxonomy;
 use Jankx\Extensions\Travel\Meta\TourMetaBoxes;
@@ -82,6 +83,16 @@ class TravelExtension extends AbstractExtension
 
         // Tour archive filtering (region, category, price, duration).
         (new TourQuery())->register();
+
+        // Register "tour" into the shared e-commerce flow (cart, checkout,
+        // payment, order) when base-ecommerce is loaded. Registering through
+        // the `jankx/ecommerce/register_product_types` hook keeps this
+        // extension fail-soft if base-ecommerce is ever disabled.
+        if (class_exists('\Jankx\Extensions\Ecommerce\EcommerceExtension')) {
+            add_action('jankx/ecommerce/register_product_types', function ($registry) {
+                $registry->register(TourPostType::POST_TYPE, TourProduct::class);
+            });
+        }
 
         // Always register blocks so ServerSideRender works in editor
         $this->register_blocks();
