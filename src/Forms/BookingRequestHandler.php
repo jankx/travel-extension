@@ -30,19 +30,19 @@ class BookingRequestHandler
     {
         wp_enqueue_script(
             'jankx-travel-booking-form',
-            get_template_directory_uri() . '/extensions/travel/assets/booking-form.js',
-            [],
+            get_stylesheet_directory_uri() . '/extensions/travel/assets/booking-form.js',
+            ['jquery'],
             '1.0.0',
             true
         );
         wp_localize_script('jankx-travel-booking-form', 'jankxTravelBooking', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
-            'action'  => self::ACTION,
-            'nonce'   => wp_create_nonce(self::ACTION),
-            'i18n'    => [
+            'action' => self::ACTION,
+            'nonce' => wp_create_nonce(self::ACTION),
+            'i18n' => [
                 'sending' => __('Đang gửi...', 'jankx'),
                 'success' => __('Cảm ơn bạn! Chúng tôi sẽ liên hệ báo giá sớm nhất.', 'jankx'),
-                'error'   => __('Có lỗi xảy ra, vui lòng thử lại.', 'jankx'),
+                'error' => __('Có lỗi xảy ra, vui lòng thử lại.', 'jankx'),
             ],
         ]);
     }
@@ -56,7 +56,7 @@ class BookingRequestHandler
     {
         check_ajax_referer(self::ACTION, 'nonce');
 
-        $name  = sanitize_text_field($_POST['customer_name'] ?? '');
+        $name = sanitize_text_field($_POST['customer_name'] ?? '');
         $phone = sanitize_text_field($_POST['customer_phone'] ?? '');
         $email = sanitize_email($_POST['customer_email'] ?? '');
         $guests = absint($_POST['guests'] ?? 0);
@@ -73,8 +73,8 @@ class BookingRequestHandler
         $tour_title = $tour_id ? get_the_title($tour_id) : __('(Không xác định)', 'jankx');
 
         $post_id = wp_insert_post([
-            'post_type'   => BookingRequestPostType::POST_TYPE,
-            'post_title'  => sprintf('%s - %s', $name, $tour_title),
+            'post_type' => BookingRequestPostType::POST_TYPE,
+            'post_title' => sprintf('%s - %s', $name, $tour_title),
             'post_status' => 'publish',
         ], true);
 
@@ -127,8 +127,8 @@ class BookingRequestHandler
             $new_columns[$key] = $label;
             if ($key === 'title') {
                 $new_columns['booking_phone'] = __('SĐT', 'jankx');
-                $new_columns['booking_tour']  = __('Tour', 'jankx');
-                $new_columns['booking_date']  = __('Ngày mong muốn', 'jankx');
+                $new_columns['booking_tour'] = __('Tour', 'jankx');
+                $new_columns['booking_date'] = __('Ngày mong muốn', 'jankx');
                 $new_columns['booking_status'] = __('Trạng thái', 'jankx');
             }
         }

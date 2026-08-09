@@ -132,14 +132,14 @@ class TourMetaBoxes
 
         wp_enqueue_style(
             'jankx-travel-admin',
-            get_template_directory_uri() . '/extensions/travel/assets/admin.css',
+            get_stylesheet_directory_uri() . '/extensions/travel/assets/admin.css',
             [],
             '1.0.0'
         );
         wp_enqueue_script(
             'jankx-travel-repeater',
-            get_template_directory_uri() . '/extensions/travel/assets/repeater.js',
-            [],
+            get_stylesheet_directory_uri() . '/extensions/travel/assets/repeater.js',
+            ['jquery'], // <-- add correct dependencies too
             '1.0.0',
             true
         );
@@ -257,10 +257,10 @@ class TourMetaBoxes
         $rating = get_post_meta($post->ID, '_tour_rating', true);
         $review_count = (int) get_post_meta($post->ID, '_tour_review_count', true);
         $destinations = get_terms([
-            'taxonomy'   => DestinationTaxonomy::TAXONOMY,
+            'taxonomy' => DestinationTaxonomy::TAXONOMY,
             'hide_empty' => false,
-            'orderby'    => 'name',
-            'order'      => 'ASC',
+            'orderby' => 'name',
+            'order' => 'ASC',
         ]);
         include __DIR__ . '/views/tour-destination.php';
     }
