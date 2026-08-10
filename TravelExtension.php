@@ -3,6 +3,7 @@
 namespace Jankx\Extensions\Travel;
 
 use Jankx\Extensions\AbstractExtension;
+use Jankx\Extensions\Travel\Admin\ThumbnailColumn;
 use Jankx\Extensions\Travel\PostTypes\TourPostType;
 use Jankx\Extensions\Travel\PostTypes\BookingRequestPostType;
 use Jankx\Extensions\Travel\Products\TourProduct;
@@ -72,6 +73,7 @@ class TravelExtension extends AbstractExtension
         // Admin meta boxes for editing tour details.
         if (is_admin()) {
             (new TourMetaBoxes())->register();
+            (new ThumbnailColumn())->register();
         }
 
         // Frontend booking-request form handling (AJAX + REST).
@@ -157,7 +159,7 @@ class TravelExtension extends AbstractExtension
             $blockName = $blockJson['name'] ?? '';
             
             $blockClass = null;
-            if ($blockName === 'jankx/account-tab-orders') {
+            if ($blockName === 'jankx/account-tab-orders' && !WP_Block_Type_Registry::get_instance()->is_registered($blockName)) {
                 $blockClass = new \Jankx\Extensions\Travel\Blocks\AccountTabOrdersBlock($blockDir);
             }
 
