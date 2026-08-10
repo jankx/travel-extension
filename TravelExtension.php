@@ -159,7 +159,7 @@ class TravelExtension extends AbstractExtension
             $blockName = $blockJson['name'] ?? '';
             
             $blockClass = null;
-            if ($blockName === 'jankx/account-tab-orders' && !WP_Block_Type_Registry::get_instance()->is_registered($blockName)) {
+            if ($blockName === 'jankx/account-tab-orders' && !\WP_Block_Type_Registry::get_instance()->is_registered($blockName)) {
                 $blockClass = new \Jankx\Extensions\Travel\Blocks\AccountTabOrdersBlock($blockDir);
             }
 
