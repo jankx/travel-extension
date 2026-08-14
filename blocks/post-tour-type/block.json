@@ -1,0 +1,65 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "jankx/post-tour-type",
+	"title": "Post Tour Type",
+	"category": "jankx",
+	"icon": "flag",
+	"description": "Hiển thị loại tour của post (tour, experience...).",
+	"textdomain": "jankx",
+	"parent": ["jankx/dynamic-data-template"],
+	"usesContext": ["postId", "postType"],
+	"attributes": {
+		"prefix": {
+			"type": "string",
+			"default": ""
+		},
+		"suffix": {
+			"type": "string",
+			"default": ""
+		},
+		"showWhenEmpty": {
+			"type": "boolean",
+			"default": false
+		},
+		"emptyText": {
+			"type": "string",
+			"default": ""
+		},
+		"tagName": {
+			"type": "string",
+			"default": "span"
+		},
+		"displayStyle": {
+			"type": "string",
+			"default": "text",
+			"enum": ["text", "badge", "dot"]
+		}
+	},
+	"supports": {
+		"html": false,
+		"color": {
+			"text": true,
+			"background": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"fontFamily": true,
+			"fontWeight": true
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true
+		}
+	},
+	"editorScript": "file:./build/index.tsx.js",
+	"style": "file:./build/style.css",
+	"editorStyle": "file:./build/editor.css"
+}

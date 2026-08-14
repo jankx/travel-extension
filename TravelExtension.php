@@ -92,8 +92,9 @@ class TravelExtension extends AbstractExtension
             });
         }
 
-        // Always register blocks so ServerSideRender works in editor
-        $this->register_blocks();
+        // Register blocks during init so wp_register_script/wp_register_style
+        // are called at the correct point in the WordPress lifecycle.
+        add_action('init', [$this, 'register_blocks']);
 
         // Frontend styles for the extension's blocks.
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
@@ -161,6 +162,12 @@ class TravelExtension extends AbstractExtension
             $blockClass = null;
             if ($blockName === 'jankx/account-tab-orders' && !\WP_Block_Type_Registry::get_instance()->is_registered($blockName)) {
                 $blockClass = new \Jankx\Extensions\Travel\Blocks\AccountTabOrdersBlock($blockDir);
+            } elseif ($blockName === 'jankx/live-counter' && !\WP_Block_Type_Registry::get_instance()->is_registered($blockName)) {
+                $blockClass = new \Jankx\Extensions\Travel\Blocks\LiveCounterBlock($blockDir);
+            } elseif ($blockName === 'jankx/post-starting-price' && !\WP_Block_Type_Registry::get_instance()->is_registered($blockName)) {
+                $blockClass = new \Jankx\Extensions\Travel\Blocks\PostStartingPriceBlock($blockDir);
+            } elseif ($blockName === 'jankx/post-tour-type' && !\WP_Block_Type_Registry::get_instance()->is_registered($blockName)) {
+                $blockClass = new \Jankx\Extensions\Travel\Blocks\PostTourTypeBlock($blockDir);
             }
 
             if ($blockClass) {

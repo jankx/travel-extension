@@ -1,0 +1,54 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "jankx/post-starting-price",
+	"title": "Post Starting Price",
+	"category": "jankx",
+	"icon": "money-alt",
+	"description": "Hiển thị giá khởi điểm của post (tour, experience...).",
+	"textdomain": "jankx",
+	"parent": ["jankx/dynamic-data-template"],
+	"usesContext": ["postId", "postType"],
+	"attributes": {
+		"prefix": {
+			"type": "string",
+			"default": "Từ "
+		},
+		"suffix": {
+			"type": "string",
+			"default": "/ người"
+		},
+		"showWhenEmpty": {
+			"type": "boolean",
+			"default": true
+		},
+		"emptyText": {
+			"type": "string",
+			"default": "Liên hệ"
+		},
+		"tagName": {
+			"type": "string",
+			"default": "span"
+		}
+	},
+	"supports": {
+		"html": false,
+		"color": {
+			"text": true,
+			"background": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"fontFamily": true,
+			"fontWeight": true
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"editorScript": "file:./build/index.tsx.js",
+	"style": "file:./build/style.css",
+	"editorStyle": "file:./build/editor.css"
+}
