@@ -15,7 +15,5 @@
     ],
     "minimum-stability": "dev",
     "require": {},
-    "config": {
-        "vendor-dir": "libs"
-    }
+    "config": {}
 }
