@@ -1,19 +1,19 @@
 <?php return array(
     'root' => array(
         'name' => 'jankx/travel-extension',
-        'pretty_version' => 'dev-main',
-        'version' => 'dev-main',
-        'reference' => 'ec5486b8173d700a019a3fe31a2bba549a76dce9',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '24d35f35ebe577c770b55b0603114e6132d847ca',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => true,
+        'dev' => false,
     ),
     'versions' => array(
         'jankx/travel-extension' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
-            'reference' => 'ec5486b8173d700a019a3fe31a2bba549a76dce9',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '24d35f35ebe577c770b55b0603114e6132d847ca',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
