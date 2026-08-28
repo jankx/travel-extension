@@ -31,18 +31,19 @@ class DestinationTaxonomy
     {
         register_taxonomy(self::TAXONOMY, self::OBJECT_TYPES, [
             'labels' => [
-                'name'          => __('Điểm đến', 'jankx'),
+                'name' => __('Điểm đến', 'jankx'),
                 'singular_name' => __('Điểm đến', 'jankx'),
-                'search_items'  => __('Tìm điểm đến', 'jankx'),
-                'all_items'     => __('Tất cả điểm đến', 'jankx'),
-                'edit_item'     => __('Sửa điểm đến', 'jankx'),
-                'add_new_item'  => __('Thêm điểm đến mới', 'jankx'),
-                'menu_name'     => __('Điểm đến', 'jankx'),
+                'search_items' => __('Tìm điểm đến', 'jankx'),
+                'all_items' => __('Tất cả điểm đến', 'jankx'),
+                'edit_item' => __('Sửa điểm đến', 'jankx'),
+                'add_new_item' => __('Thêm điểm đến mới', 'jankx'),
+                'menu_name' => __('Điểm đến', 'jankx'),
             ],
-            'public'            => true,
-            'show_in_rest'      => true,
+            'public' => true,
+            'show_in_rest' => true,
             'show_admin_column' => true,
-            'rewrite'           => ['slug' => 'diem-den'],
+            'hierarchical' => true,
+            'rewrite' => ['slug' => 'diem-den'],
         ]);
     }
 

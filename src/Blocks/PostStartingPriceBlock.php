@@ -15,10 +15,22 @@ class PostStartingPriceBlock extends Block
 
     public function render($attributes, $content = '', $block = null)
     {
-        $postId = $this->resolvePostId($block);
-        if (!$postId) {
-            return '';
+        $isTemplateEditor = $this->isTemplateEditor();
+
+        if ($isTemplateEditor) {
+            $price = $this->getMockPrice();
+        } else {
+            $postId = $this->resolvePostId($block);
+            if (!$postId) {
+                return '';
+            }
+
+            $price = get_post_meta($postId, '_experience_starting_price', true);
         }
+
+        $currency = $isTemplateEditor
+            ? 'VND'
+            : (get_post_meta($postId, '_experience_currency', true) ?: 'VND');
 
         $prefix = $attributes['prefix'] ?? 'Từ ';
         $suffix = $attributes['suffix'] ?? '/ người';
@@ -31,8 +43,7 @@ class PostStartingPriceBlock extends Block
             $tagName = 'span';
         }
 
-        $price = get_post_meta($postId, '_experience_starting_price', true);
-        $currency = get_post_meta($postId, '_experience_currency', true) ?: 'VND';
+        $price = $price ?? '';
 
         if (empty($price)) {
             if (!$showWhenEmpty) {
@@ -90,5 +101,51 @@ class PostStartingPriceBlock extends Block
         }
 
         return 0;
+    }
+
+    /**
+     * Check whether the block is rendered inside the template editor.
+     *
+     * @return bool
+     */
+    protected function isTemplateEditor()
+    {
+        if (defined('REST_REQUEST') && REST_REQUEST) {
+            $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+            if (strpos($request_uri, '/wp-json/wp/v2/template') !== false ||
+                strpos($request_uri, '/wp-json/wp/v2/template-part') !== false) {
+                return true;
+            }
+        }
+
+        if (function_exists('get_current_screen')) {
+            $screen = get_current_screen();
+            if ($screen && ($screen->id === 'site-editor' || $screen->id === 'appearance_page_gutenberg-edit-site')) {
+                return true;
+            }
+        }
+
+        if (isset($_GET['_wp-find-template']) ||
+            (isset($_GET['postType']) && $_GET['postType'] === 'wp_template')) {
+            return true;
+        }
+
+        global $post;
+        if ((is_admin() || (defined('REST_REQUEST') && REST_REQUEST)) &&
+            (empty($post) || empty($post->post_content))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get mock starting price for template editor preview.
+     *
+     * @return string
+     */
+    protected function getMockPrice()
+    {
+        return '4500000';
     }
 }
