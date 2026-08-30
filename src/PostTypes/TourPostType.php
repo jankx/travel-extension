@@ -37,7 +37,7 @@ class TourPostType
         register_post_type(self::POST_TYPE, [
             'labels'       => $labels,
             'public'       => true,
-            'show_in_rest' => true,
+            'show_in_rest' => false,
             'menu_icon'    => 'dashicons-airplane',
             'menu_position' => 20,
             'supports'     => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
