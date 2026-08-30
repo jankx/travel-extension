@@ -73,6 +73,14 @@ $wrapper_attributes = get_block_wrapper_attributes(['class' => 'jankx-departure-
                 ?>
                 <li class="jankx-departure-calendar__item">
                     <span class="jankx-departure-calendar__date"><?php echo esc_html($formatted); ?></span>
+                    <?php
+                    // Allow extensions (e.g. date-based tour pricing) to show a
+                    // per-date price next to the departure date.
+                    $departurePrice = apply_filters('jankx/travel/departure_calendar/price', '', $row['tour_id'] ?? $post_id, $date);
+                    if ($departurePrice) {
+                        echo '<span class="jankx-departure-calendar__price">' . $departurePrice . '</span>';
+                    }
+                    ?>
                     <?php if ($tour_title) : ?>
                         <a href="<?php echo esc_url($tour_link); ?>" class="jankx-departure-calendar__tour"><?php echo esc_html($tour_title); ?></a>
                     <?php endif; ?>

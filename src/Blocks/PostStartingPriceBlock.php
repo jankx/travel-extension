@@ -16,6 +16,7 @@ class PostStartingPriceBlock extends Block
     public function render($attributes, $content = '', $block = null)
     {
         $isTemplateEditor = $this->isTemplateEditor();
+        $postId = 0;
 
         if ($isTemplateEditor) {
             $price = $this->getMockPrice();
@@ -27,6 +28,10 @@ class PostStartingPriceBlock extends Block
 
             $price = get_post_meta($postId, '_experience_starting_price', true);
         }
+
+        // Allow business extensions (e.g. date-based tour pricing) to swap the
+        // displayed starting price with their own logic.
+        $price = apply_filters('jankx/travel/tour/starting_price', $price, $postId);
 
         $currency = $isTemplateEditor
             ? 'VND'
