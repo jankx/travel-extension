@@ -34,11 +34,16 @@ class PostStartingPriceBlock extends Block
         // displayed starting price with their own logic.
         $price = apply_filters('jankx/travel/tour/starting_price', $price, $postId);
 
-        // Get currency - prefer post meta, fallback to default currency
+        // Giá lưu trong DB theo đơn vị mặc định của site (sourceCurrency).
+        // Nếu bài viết có meta _experience_currency riêng (giá nhập bằng ngoại tệ),
+        // dùng meta đó làm sourceCurrency; còn lại luôn lấy default currency.
+        $defaultCurrency = CurrencyManager::getDefaultCurrency();
         $currencyMeta = get_post_meta($postId, '_experience_currency', true);
-        $currency = $isTemplateEditor
-            ? CurrencyManager::getDefaultCurrency()
-            : (!empty($currencyMeta) ? strtoupper($currencyMeta) : CurrencyManager::getDefaultCurrency());
+        $sourceCurrency = (!$isTemplateEditor && !empty($currencyMeta))
+            ? strtoupper($currencyMeta)
+            : $defaultCurrency;
+
+        $targetCurrency = CurrencyManager::getCurrentCurrency();
 
         $prefix = $attributes['prefix'] ?? 'Từ ';
         $suffix = $attributes['suffix'] ?? '/ người';
@@ -59,12 +64,11 @@ class PostStartingPriceBlock extends Block
             }
             $formattedPrice = esc_html($emptyText);
         } else {
-            // Use CurrencyConverterManager directly for formatting with conversion support
             $converterManager = \Jankx\Extensions\Ecommerce\Currency\Converters\CurrencyConverterManager::getInstance();
             $formattedPrice = $converterManager->formatPriceWithConversion(
                 (float) $price,
-                $currency,
-                CurrencyManager::getCurrentCurrency()
+                $sourceCurrency,   // Đồng tiền giá được nhập (thường = default currency)
+                $targetCurrency    // Đồng tiền user đang xem
             );
         }
 
