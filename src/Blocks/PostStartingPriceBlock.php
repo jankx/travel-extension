@@ -8,6 +8,7 @@
 namespace Jankx\Extensions\Travel\Blocks;
 
 use Jankx\Extensions\Travel\Block;
+use Jankx\Extensions\Ecommerce\Currency\CurrencyManager;
 
 class PostStartingPriceBlock extends Block
 {
@@ -33,9 +34,10 @@ class PostStartingPriceBlock extends Block
         // displayed starting price with their own logic.
         $price = apply_filters('jankx/travel/tour/starting_price', $price, $postId);
 
+        // Get currency - prefer post meta, fallback to default currency
         $currency = $isTemplateEditor
-            ? 'VND'
-            : (get_post_meta($postId, '_experience_currency', true) ?: 'VND');
+            ? CurrencyManager::getDefaultCurrency()
+            : (get_post_meta($postId, '_experience_currency', true) ?: CurrencyManager::getDefaultCurrency());
 
         $prefix = $attributes['prefix'] ?? 'Từ ';
         $suffix = $attributes['suffix'] ?? '/ người';
@@ -56,7 +58,12 @@ class PostStartingPriceBlock extends Block
             }
             $formattedPrice = esc_html($emptyText);
         } else {
-            $formattedPrice = $this->formatPrice($price, $currency);
+            // Use CurrencyManager for formatting with conversion support
+            $formattedPrice = CurrencyManager::formatPriceWithConversion(
+                (float) $price,
+                $currency,
+                CurrencyManager::getCurrentCurrency()
+            );
         }
 
         $wrapperAttrs = get_block_wrapper_attributes([
@@ -76,17 +83,6 @@ class PostStartingPriceBlock extends Block
         </<?php echo esc_attr($tagName); ?>>
         <?php
         return ob_get_clean();
-    }
-
-    protected function formatPrice($price, $currency = 'VND'): string
-    {
-        $price = (float) str_replace(['.', ','], '', $price);
-
-        if ($currency === 'VND') {
-            return esc_html(number_format($price, 0, '', '.') . '₫');
-        }
-
-        return esc_html('$' . number_format($price, 2, '.', ','));
     }
 
     protected function resolvePostId($block): int
