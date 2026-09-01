@@ -35,9 +35,10 @@ class PostStartingPriceBlock extends Block
         $price = apply_filters('jankx/travel/tour/starting_price', $price, $postId);
 
         // Get currency - prefer post meta, fallback to default currency
+        $currencyMeta = get_post_meta($postId, '_experience_currency', true);
         $currency = $isTemplateEditor
             ? CurrencyManager::getDefaultCurrency()
-            : (get_post_meta($postId, '_experience_currency', true) ?: CurrencyManager::getDefaultCurrency());
+            : (!empty($currencyMeta) ? strtoupper($currencyMeta) : CurrencyManager::getDefaultCurrency());
 
         $prefix = $attributes['prefix'] ?? 'Từ ';
         $suffix = $attributes['suffix'] ?? '/ người';
@@ -58,8 +59,9 @@ class PostStartingPriceBlock extends Block
             }
             $formattedPrice = esc_html($emptyText);
         } else {
-            // Use CurrencyManager for formatting with conversion support
-            $formattedPrice = CurrencyManager::formatPriceWithConversion(
+            // Use CurrencyConverterManager directly for formatting with conversion support
+            $converterManager = \Jankx\Extensions\Ecommerce\Currency\Converters\CurrencyConverterManager::getInstance();
+            $formattedPrice = $converterManager->formatPriceWithConversion(
                 (float) $price,
                 $currency,
                 CurrencyManager::getCurrentCurrency()
@@ -72,14 +74,18 @@ class PostStartingPriceBlock extends Block
 
         ob_start();
         ?>
-        <<?php echo esc_attr($tagName); ?> <?php echo $wrapperAttrs; ?>>
-            <?php if (!empty($prefix)) : ?>
-                <span class="post-starting-price__prefix"><?php echo esc_html($prefix); ?></span>
-            <?php endif; ?>
-            <span class="post-starting-price__price"><?php echo $formattedPrice; ?></span>
-            <?php if (!empty($suffix)) : ?>
-                <span class="post-starting-price__suffix"> <?php echo esc_html($suffix); ?></span>
-            <?php endif; ?>
+        <<?php echo esc_attr($tagName); ?>         <?php echo $wrapperAttrs; ?>>
+            <?php
+            if (!empty($prefix)) {
+                echo '<span class="post-starting-price__prefix">' . esc_html($prefix) . '</span>';
+            }
+            ?><span
+                class="post-starting-price__price"><?php echo $formattedPrice; /* Đã bao gồm custom currency format từ CurrencyManager */ ?></span>
+            <?php
+            if (!empty($suffix)) {
+                echo '<span class="post-starting-price__suffix">' . esc_html($suffix) . '</span>';
+            }
+            ?>
         </<?php echo esc_attr($tagName); ?>>
         <?php
         return ob_get_clean();
@@ -113,8 +119,10 @@ class PostStartingPriceBlock extends Block
     {
         if (defined('REST_REQUEST') && REST_REQUEST) {
             $request_uri = $_SERVER['REQUEST_URI'] ?? '';
-            if (strpos($request_uri, '/wp-json/wp/v2/template') !== false ||
-                strpos($request_uri, '/wp-json/wp/v2/template-part') !== false) {
+            if (
+                strpos($request_uri, '/wp-json/wp/v2/template') !== false ||
+                strpos($request_uri, '/wp-json/wp/v2/template-part') !== false
+            ) {
                 return true;
             }
         }
@@ -126,14 +134,18 @@ class PostStartingPriceBlock extends Block
             }
         }
 
-        if (isset($_GET['_wp-find-template']) ||
-            (isset($_GET['postType']) && $_GET['postType'] === 'wp_template')) {
+        if (
+            isset($_GET['_wp-find-template']) ||
+            (isset($_GET['postType']) && $_GET['postType'] === 'wp_template')
+        ) {
             return true;
         }
 
         global $post;
-        if ((is_admin() || (defined('REST_REQUEST') && REST_REQUEST)) &&
-            (empty($post) || empty($post->post_content))) {
+        if (
+            (is_admin() || (defined('REST_REQUEST') && REST_REQUEST)) &&
+            (empty($post) || empty($post->post_content))
+        ) {
             return true;
         }
 
