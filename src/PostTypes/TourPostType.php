@@ -39,7 +39,7 @@ class TourPostType
             'public'       => true,
             'show_in_rest' => false,
             'menu_icon'    => 'dashicons-airplane',
-            'menu_position' => 20,
+            'menu_position' => 15,
             'supports'     => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
             'has_archive'  => 'tours',
             'rewrite'      => ['slug' => 'tour', 'with_front' => false],
