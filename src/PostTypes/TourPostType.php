@@ -12,6 +12,16 @@ class TourPostType
     public function register(): void
     {
         add_action('init', [$this, 'register_post_type']);
+        add_filter('use_block_editor_for_post_type', [$this, 'disableBlockEditor'], 10, 2);
+    }
+
+    public function disableBlockEditor($use_block_editor, $post_type)
+    {
+        if ($post_type === self::POST_TYPE) {
+            return false;
+        }
+
+        return $use_block_editor;
     }
 
     public function register_post_type(): void
@@ -37,7 +47,7 @@ class TourPostType
         register_post_type(self::POST_TYPE, [
             'labels'       => $labels,
             'public'       => true,
-            'show_in_rest' => false,
+            'show_in_rest' => true,
             'menu_icon'    => 'dashicons-airplane',
             'menu_position' => 15,
             'supports'     => ['title', 'editor', 'excerpt', 'thumbnail', 'custom-fields'],
