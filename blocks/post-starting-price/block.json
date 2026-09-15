@@ -7,7 +7,6 @@
 	"icon": "money-alt",
 	"description": "Hiển thị giá khởi điểm của post (tour, experience...).",
 	"textdomain": "jankx",
-	"parent": ["jankx/dynamic-data-template"],
 	"usesContext": ["postId", "postType"],
 	"attributes": {
 		"prefix": {
