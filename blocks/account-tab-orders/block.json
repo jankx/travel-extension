@@ -7,7 +7,6 @@
     "icon": "list-view",
     "description": "Display user's booking orders.",
     "textdomain": "jankx",
-    "parent": ["jankx/account-content"],
     "attributes": {
         "jankxHideOnUltrawide": { "type": "boolean", "default": false },
         "jankxHideOnPc": { "type": "boolean", "default": false },
