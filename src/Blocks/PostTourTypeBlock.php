@@ -49,14 +49,27 @@ class PostTourTypeBlock extends Block
         }
 
         $tourType = get_post_meta($postId, '_experience_tour_type', true);
+        $tourTypeLabel = '';
 
-        if (empty($tourType)) {
+        if (!empty($tourType)) {
+            // Prefer taxonomy term name (supports custom labels)
+            $term = get_term_by('slug', $tourType, 'experience_type');
+            $tourTypeLabel = $term ? $term->name : (self::TOUR_TYPES[$tourType] ?? ucfirst($tourType));
+        } else {
+            // Fallback: try taxonomy experience_type
+            $terms = get_the_terms($postId, 'experience_type');
+            if ($terms && !is_wp_error($terms)) {
+                $tourTypeLabel = $terms[0]->name;
+            }
+        }
+
+        if (empty($tourTypeLabel)) {
             if (!$showWhenEmpty) {
                 return '';
             }
             $label = esc_html($emptyText);
         } else {
-            $label = esc_html(self::TOUR_TYPES[$tourType] ?? $tourType);
+            $label = esc_html($tourTypeLabel);
         }
 
         $wrapperClasses = [
