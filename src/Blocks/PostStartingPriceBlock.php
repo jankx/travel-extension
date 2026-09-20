@@ -74,6 +74,7 @@ class PostStartingPriceBlock extends Block
 
         $wrapperAttrs = get_block_wrapper_attributes([
             'class' => 'wp-block-jankx-post-starting-price',
+            'style' => $this->buildInlineStyle($attributes),
         ]);
 
         ob_start();
@@ -93,6 +94,40 @@ class PostStartingPriceBlock extends Block
         </<?php echo esc_attr($tagName); ?>>
         <?php
         return ob_get_clean();
+    }
+
+    /**
+     * Build inline style string from block attributes (typography, color, border).
+     */
+    protected function buildInlineStyle(array $attributes): string
+    {
+        $parts = [];
+        $style = $attributes['style'] ?? [];
+
+        // Typography
+        $typo = $style['typography'] ?? [];
+        if (!empty($typo['fontSize']))       $parts[] = 'font-size: ' . esc_attr($typo['fontSize']);
+        if (!empty($typo['lineHeight']))     $parts[] = 'line-height: ' . esc_attr($typo['lineHeight']);
+        if (!empty($typo['fontFamily']))     $parts[] = 'font-family: ' . esc_attr($typo['fontFamily']);
+        if (!empty($typo['fontWeight']))     $parts[] = 'font-weight: ' . esc_attr($typo['fontWeight']);
+        if (!empty($typo['fontStyle']))      $parts[] = 'font-style: ' . esc_attr($typo['fontStyle']);
+        if (!empty($typo['textTransform']))  $parts[] = 'text-transform: ' . esc_attr($typo['textTransform']);
+        if (!empty($typo['textDecoration'])) $parts[] = 'text-decoration: ' . esc_attr($typo['textDecoration']);
+        if (!empty($typo['letterSpacing']))  $parts[] = 'letter-spacing: ' . esc_attr($typo['letterSpacing']);
+
+        // Color
+        $color = $style['color'] ?? [];
+        if (!empty($color['text']))        $parts[] = 'color: ' . esc_attr($color['text']);
+        if (!empty($color['background']))  $parts[] = 'background-color: ' . esc_attr($color['background']);
+
+        // Border
+        $border = $style['border'] ?? [];
+        if (!empty($border['color']))   $parts[] = 'border-color: ' . esc_attr($border['color']);
+        if (!empty($border['radius']))  $parts[] = 'border-radius: ' . esc_attr($border['radius']);
+        if (!empty($border['style']))   $parts[] = 'border-style: ' . esc_attr($border['style']);
+        if (!empty($border['width']))   $parts[] = 'border-width: ' . esc_attr($border['width']);
+
+        return implode('; ', $parts);
     }
 
     protected function resolvePostId($block): int
