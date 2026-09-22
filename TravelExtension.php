@@ -92,6 +92,21 @@ class TravelExtension extends AbstractExtension
             });
         }
 
+        // Register coupon scope support
+        add_filter('jankx/coupon/product_scope/post_types', function ($types) {
+            $types[] = [
+                'label'     => __('Tour du lịch', 'jankx'),
+                'rest_base' => 'tour',
+                'post_type' => TourPostType::POST_TYPE,
+            ];
+            return $types;
+        });
+
+        add_filter('jankx/coupon/product_type_scope/post_types', function ($options) {
+            $options[] = ['value' => TourPostType::POST_TYPE, 'label' => __('Tour du lịch', 'jankx')];
+            return $options;
+        });
+
         // Register blocks during init so wp_register_script/wp_register_style
         // are called at the correct point in the WordPress lifecycle.
         add_action('init', [$this, 'register_blocks']);
