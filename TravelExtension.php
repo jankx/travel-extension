@@ -118,6 +118,9 @@ class TravelExtension extends AbstractExtension
         // dynamic (server-rendered) blocks, instead of showing the
         // "Your site doesn't include support for this block" placeholder.
         add_action('enqueue_block_editor_assets', [$this, 'enqueue_editor_assets']);
+
+        // Register star rating data source for tour posts.
+        add_action('init', [$this, 'register_star_rating_provider'], 20);
     }
 
     public function enqueue_editor_assets(): void
@@ -191,5 +194,29 @@ class TravelExtension extends AbstractExtension
                 $blockClass->register();
             }
         }
+    }
+
+    public function register_star_rating_provider(): void
+    {
+        if (!class_exists('\Jankx\Gutenberg\StarRating\StarRatingRegistry')) {
+            return;
+        }
+
+        \Jankx\Gutenberg\StarRating\StarRatingRegistry::register(
+            new \Jankx\Gutenberg\StarRating\Providers\ConfigurableRatingProvider([
+                'id'             => 'tour_rating',
+                'label'          => __('Tour Rating', 'jankx'),
+                'postTypes'      => ['tour'],
+                'ratingMetaKey'  => 'jankx_rating_average',
+                'countMetaKey'   => 'jankx_rating_count',
+                'editorControls' => [
+                    [
+                        'type'      => 'toggle',
+                        'attribute' => 'showCount',
+                        'label'     => __('Show review count', 'jankx'),
+                    ],
+                ],
+            ])
+        );
     }
 }
