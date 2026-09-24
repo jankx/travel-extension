@@ -67,6 +67,11 @@ class TravelExtension extends AbstractExtension
         (new TourPostType())->register();
         (new BookingRequestPostType())->register();
 
+        // Enable reviews for the tour post type via the review-system API.
+        if (class_exists(\Jankx\Extensions\ReviewSystem\ReviewSystemExtension::class)) {
+            \Jankx\Extensions\ReviewSystem\ReviewSystemExtension::support_post_type(TourPostType::POST_TYPE);
+        }
+
         (new TourCategoryTaxonomy())->register();
         (new DestinationTaxonomy())->register();
 
