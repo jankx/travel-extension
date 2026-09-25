@@ -9,6 +9,7 @@ namespace Jankx\Extensions\Travel\Blocks;
 
 use Jankx\Extensions\Travel\Block;
 use Jankx\Extensions\Ecommerce\Currency\CurrencyManager;
+use Jankx\Extensions\Ecommerce\Registry\ProductRegistry;
 
 class PostStartingPriceBlock extends Block
 {
@@ -18,6 +19,7 @@ class PostStartingPriceBlock extends Block
     {
         $isTemplateEditor = $this->isTemplateEditor();
         $postId = 0;
+        $product = null;
 
         if ($isTemplateEditor) {
             $price = $this->getMockPrice();
@@ -27,7 +29,13 @@ class PostStartingPriceBlock extends Block
                 return '';
             }
 
-            $price = get_post_meta($postId, '_experience_starting_price', true);
+            // Dùng chung nguồn giá qua API Product của base-ecommerce để khớp
+            // chính xác với block "Add to Cart" (getPrice()). Fallback về meta
+            // legacy khi post type chưa được đăng ký product.
+            $product = ProductRegistry::get_instance()->createProduct($postId);
+            $price = $product
+                ? $product->getPrice()
+                : (float) get_post_meta($postId, '_experience_starting_price', true);
         }
 
         // Allow business extensions (e.g. date-based tour pricing) to swap the
