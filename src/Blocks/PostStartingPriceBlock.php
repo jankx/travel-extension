@@ -24,7 +24,7 @@ class PostStartingPriceBlock extends Block
         if ($isTemplateEditor) {
             $price = $this->getMockPrice();
         } else {
-            $postId = $this->resolvePostId($block);
+            $postId = $this->resolvePostId($attributes, $block);
             if (!$postId) {
                 return '';
             }
@@ -213,10 +213,17 @@ class PostStartingPriceBlock extends Block
         return '';
     }
 
-    protected function resolvePostId($block): int
+    protected function resolvePostId($attributes, $block): int
     {
-        if ($block instanceof \WP_Block && !empty($block->context['postId'])) {
+        $postId = (int) ($attributes['postId'] ?? 0);
+        if ($postId > 0) {
+            return $postId;
+        }
+
+        if (is_object($block) && !empty($block->context['postId'])) {
             return (int) $block->context['postId'];
+        } elseif (is_array($block) && !empty($block['context']['postId'])) {
+            return (int) $block['context']['postId'];
         }
 
         $postId = get_the_ID();
