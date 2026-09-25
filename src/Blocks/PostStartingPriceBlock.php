@@ -32,10 +32,11 @@ class PostStartingPriceBlock extends Block
             // Dùng chung nguồn giá qua API Product của base-ecommerce để khớp
             // chính xác với block "Add to Cart" (getPrice()). Fallback về meta
             // legacy khi post type chưa được đăng ký product.
+            $postType = get_post_type($postId);
             $product = ProductRegistry::get_instance()->createProduct($postId);
             $price = $product
                 ? $product->getPrice()
-                : (float) get_post_meta($postId, '_experience_starting_price', true);
+                : (float) self::getFirstMetaValue($postId, self::getPriceMetaKeys($postType ?: ''));
         }
 
         // Allow business extensions (e.g. date-based tour pricing) to swap the
@@ -136,6 +137,80 @@ class PostStartingPriceBlock extends Block
         if (!empty($border['width']))   $parts[] = 'border-width: ' . esc_attr($border['width']);
 
         return implode('; ', $parts);
+    }
+
+    /**
+     * Resolve the ordered list of price meta keys for a post type.
+     *
+     * Each product type declares its own price meta key(s) via
+     * AbstractProduct::PRICE_META_KEY + LEGACY_PRICE_META_KEYS. This is the
+     * single API consumed by blocks and admin meta boxes so every consumer
+     * reads/writes the same key per post type.
+     *
+     * @param string $postType
+     * @return string[]
+     */
+    public static function getPriceMetaKeys(string $postType): array
+    {
+        $keys = [];
+
+        if ($postType !== '' && class_exists('\Jankx\Extensions\Ecommerce\Registry\ProductRegistry')) {
+            $productClass = \Jankx\Extensions\Ecommerce\Registry\ProductRegistry::get_instance()->getProductClass($postType);
+            if ($productClass && is_subclass_of($productClass, '\Jankx\Extensions\Ecommerce\Abstracts\AbstractProduct')) {
+                $keys = array_merge([$productClass::PRICE_META_KEY], (array) $productClass::LEGACY_PRICE_META_KEYS);
+            }
+        }
+
+        if (empty($keys)) {
+            $specific = '_' . $postType . '_price';
+            $keys = $specific === '_price' ? ['_price'] : ['_price', $specific];
+        }
+
+        return (array) apply_filters('jankx/travel/post_starting_price/meta_keys', $keys, $postType);
+    }
+
+    /**
+     * Resolve the canonical meta key that admin should write for a post type.
+     *
+     * Prefers the first legacy "sell price" key (e.g. _experience_price,
+     * _tour_price, _product_price) over the generic _jankx_price so external
+     * readers (search, tour pricing) keep seeing the updated value.
+     *
+     * @param string $postType
+     * @return string
+     */
+    public static function getPriceMetaKey(string $postType): string
+    {
+        $key = '_price';
+
+        if ($postType !== '' && class_exists('\Jankx\Extensions\Ecommerce\Registry\ProductRegistry')) {
+            $productClass = \Jankx\Extensions\Ecommerce\Registry\ProductRegistry::get_instance()->getProductClass($postType);
+            if ($productClass && is_subclass_of($productClass, '\Jankx\Extensions\Ecommerce\Abstracts\AbstractProduct')) {
+                $legacy = (array) $productClass::LEGACY_PRICE_META_KEYS;
+                $key = !empty($legacy) ? $legacy[0] : $productClass::PRICE_META_KEY;
+            }
+        }
+
+        return (string) apply_filters('jankx/travel/post_starting_price/meta_key', $key, $postType);
+    }
+
+    /**
+     * Read the first non-empty meta value from an ordered list of keys.
+     *
+     * @param int    $postId
+     * @param array  $keys
+     * @return string
+     */
+    protected static function getFirstMetaValue(int $postId, array $keys): string
+    {
+        foreach ($keys as $key) {
+            $value = get_post_meta($postId, $key, true);
+            if ($value !== '' && $value !== false) {
+                return (string) $value;
+            }
+        }
+
+        return '';
     }
 
     protected function resolvePostId($block): int
