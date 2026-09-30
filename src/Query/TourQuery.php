@@ -3,6 +3,7 @@
 namespace Jankx\Extensions\Travel\Query;
 
 use Jankx\Extensions\Travel\PostTypes\TourPostType;
+use Jankx\Extensions\Travel\Meta\TourMetaBoxes;
 use Jankx\Extensions\Travel\Taxonomies\TourCategoryTaxonomy;
 use Jankx\Extensions\Travel\Taxonomies\DestinationTaxonomy;
 
@@ -99,7 +100,7 @@ class TourQuery
 
         if (!empty($_GET['tour_duration_days'])) {
             $meta_query[] = [
-                'key'     => '_tour_duration_days',
+                'key'     => TourMetaBoxes::DURATION_DAYS_META,
                 'value'   => absint($_GET['tour_duration_days']),
                 'type'    => 'NUMERIC',
                 'compare' => '<=',

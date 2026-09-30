@@ -14,6 +14,10 @@ class TourMetaBoxes
     const NONCE_ACTION = 'jankx_travel_tour_meta';
     const NONCE_NAME = 'jankx_travel_tour_meta_nonce';
 
+    const PRICE_IS_FROM_META = '_tour_price_is_from';
+    const DURATION_DAYS_META = '_tour_duration_days';
+    const DURATION_NIGHTS_META = '_tour_duration_nights';
+
     public function register(): void
     {
         add_action('init', [$this, 'register_meta']);
@@ -27,7 +31,7 @@ class TourMetaBoxes
     {
         $string_keys = [
             '_tour_price' => 'Giá tour (VNĐ)',
-            '_tour_price_is_from' => 'Giá là giá khởi điểm (0/1)',
+            self::PRICE_IS_FROM_META => 'Giá là giá khởi điểm (0/1)',
             '_tour_meeting_point' => 'Địa điểm xuất phát / tập kết',
             '_tour_departure_type' => 'Loại khởi hành: tu_tuc hoặc co_dinh',
         ];
@@ -46,8 +50,8 @@ class TourMetaBoxes
         }
 
         $int_keys = [
-            '_tour_duration_days' => 'Số ngày',
-            '_tour_duration_nights' => 'Số đêm',
+            self::DURATION_DAYS_META => 'Số ngày',
+            self::DURATION_NIGHTS_META => 'Số đêm',
             '_tour_max_guests' => 'Số khách tối đa',
             '_tour_review_count' => 'Tổng số đánh giá',
         ];
@@ -220,9 +224,9 @@ class TourMetaBoxes
     {
         $this->nonce_field();
         $price = get_post_meta($post->ID, '_tour_price', true);
-        $price_from = get_post_meta($post->ID, '_tour_price_is_from', true);
-        $days = get_post_meta($post->ID, '_tour_duration_days', true);
-        $nights = get_post_meta($post->ID, '_tour_duration_nights', true);
+        $price_from = get_post_meta($post->ID, self::PRICE_IS_FROM_META, true);
+        $days = get_post_meta($post->ID, self::DURATION_DAYS_META, true);
+        $nights = get_post_meta($post->ID, self::DURATION_NIGHTS_META, true);
         $max_guests = get_post_meta($post->ID, '_tour_max_guests', true);
         include __DIR__ . '/views/tour-pricing.php';
     }
@@ -298,9 +302,9 @@ class TourMetaBoxes
 
         // Pricing & general info
         update_post_meta($post_id, '_tour_price', sanitize_text_field($_POST['tour_price'] ?? ''));
-        update_post_meta($post_id, '_tour_price_is_from', !empty($_POST['tour_price_is_from']) ? 1 : 0);
-        update_post_meta($post_id, '_tour_duration_days', absint($_POST['tour_duration_days'] ?? 0));
-        update_post_meta($post_id, '_tour_duration_nights', absint($_POST['tour_duration_nights'] ?? 0));
+        update_post_meta($post_id, self::PRICE_IS_FROM_META, !empty($_POST['tour_price_is_from']) ? 1 : 0);
+        update_post_meta($post_id, self::DURATION_DAYS_META, absint($_POST['tour_duration_days'] ?? 0));
+        update_post_meta($post_id, self::DURATION_NIGHTS_META, absint($_POST['tour_duration_nights'] ?? 0));
         update_post_meta($post_id, '_tour_max_guests', absint($_POST['tour_max_guests'] ?? 0));
 
         // Destination & rating

@@ -96,6 +96,22 @@ class TravelExtension extends AbstractExtension
             });
         }
 
+        // Declare the tour-specific meta the advanced search cards render.
+        // Price, rating and review count are derived from the product and
+        // rating registries, but the "starting from" flag and the day/night
+        // duration are tour concepts, so they are declared here.
+        add_filter('jankx/advanced_search/post_type_config', function ($config, $postType) {
+            if ($postType !== TourPostType::POST_TYPE) {
+                return $config;
+            }
+
+            $config['price_from_meta'] = TourMetaBoxes::PRICE_IS_FROM_META;
+            $config['days_meta'] = TourMetaBoxes::DURATION_DAYS_META;
+            $config['nights_meta'] = TourMetaBoxes::DURATION_NIGHTS_META;
+
+            return $config;
+        }, 10, 2);
+
         // Register coupon scope support
         add_filter('jankx/coupon/product_scope/post_types', function ($types) {
             $types[] = [
