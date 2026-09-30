@@ -1,7 +1,7 @@
 {
     "name": "Travel",
     "version": "1.0.0",
-    "description": "Bổ sung tính năng ngành du lịch: Điểm đến, Tour, lịch trình, lịch khởi hành, form yêu cầu báo giá.",
+    "description": "Bổ sung tính năng ngành du lịch: Điểm đến, Tour, lịch trình, lịch khởi hành.",
     "author": "Jankx",
     "extension_id": "travel",
     "context": ["admin", "frontend", "rest", "ajax"],

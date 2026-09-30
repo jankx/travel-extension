@@ -1,7 +1,6 @@
 .jankx-tour-search,
 .jankx-departure-calendar,
-.jankx-itinerary,
-.jankx-travel-booking-form {
+.jankx-itinerary {
     --jankx-travel-accent: var(--wp--preset--color--primary, #0f766e);
     --jankx-travel-text: var(--wp--preset--color--contrast, #1f2937);
     --jankx-travel-muted: var(--wp--preset--color--grey-text, #6b7280);
@@ -133,73 +132,6 @@
     padding: 0 18px 16px 36px;
     color: var(--jankx-travel-muted);
     line-height: 1.7;
-}
-
-/* Booking request form */
-.jankx-travel-booking-form__title {
-    margin: 0 0 16px;
-    color: var(--jankx-travel-text);
-}
-.jankx-travel-booking-form__form {
-    display: grid;
-    gap: 14px;
-    background: var(--jankx-travel-surface);
-    border: 1px solid var(--jankx-travel-border);
-    border-radius: 12px;
-    padding: 24px;
-}
-.jankx-travel-booking-form__row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-.jankx-travel-booking-form__field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-.jankx-travel-booking-form__field label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--jankx-travel-muted);
-}
-.jankx-travel-booking-form__field input,
-.jankx-travel-booking-form__field textarea {
-    padding: 10px 12px;
-    border: 1px solid var(--jankx-travel-border);
-    border-radius: 8px;
-    font-size: 14px;
-    color: var(--jankx-travel-text);
-    font-family: inherit;
-}
-.jankx-travel-booking-form__submit {
-    justify-self: start;
-    background: var(--jankx-travel-accent);
-    color: #ffffff;
-    border: 0;
-    padding: 12px 28px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-}
-.jankx-travel-booking-form__submit:hover {
-    opacity: 0.9;
-}
-.jankx-travel-booking-status {
-    margin: 0;
-    font-size: 14px;
-}
-.jankx-travel-booking-status.is-success {
-    color: #15803d;
-}
-.jankx-travel-booking-status.is-error {
-    color: #b91c1c;
-}
-
-@media (max-width: 640px) {
-    .jankx-travel-booking-form__row {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* Tour meta (price, duration, rating) */

@@ -1,6 +1,6 @@
 {
     "name": "jankx/travel-extension",
-    "description": "Bổ sung tính năng ngành du lịch: Điểm đến, Tour, lịch trình, lịch khởi hành, form yêu cầu báo giá.",
+    "description": "Bổ sung tính năng ngành du lịch: Điểm đến, Tour, lịch trình, lịch khởi hành.",
     "type": "project",
     "autoload": {
         "psr-4": {

@@ -35,7 +35,6 @@
 		[ 'jankx-travel/tour-search', __( 'Tour Search & Filter', 'jankx' ) ],
 		[ 'jankx-travel/departure-calendar', __( 'Departure Calendar', 'jankx' ) ],
 		[ 'jankx-travel/itinerary', __( 'Tour Itinerary', 'jankx' ) ],
-		[ 'jankx-travel/booking-form', __( 'Booking Request Form', 'jankx' ) ],
 		[ 'jankx-travel/tour-meta', __( 'Tour Meta', 'jankx' ) ],
 	];
 
