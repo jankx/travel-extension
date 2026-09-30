@@ -15,6 +15,22 @@ class PostStartingPriceBlock extends Block
 {
     protected $blockId = 'jankx/post-starting-price';
 
+    /**
+     * Starting price meta keys for post types that no longer declare a
+     * product in the registry, so createProduct() returns null and the
+     * generic fallback below kicks in.
+     *
+     * The experience post type was removed in favour of tour, but rows may
+     * still carry _experience_starting_price. The block is a *starting* price
+     * block, so that key must win over the sell price (_experience_price),
+     * which is only kept as a lower-priority fallback.
+     *
+     * @var array<string, string[]>
+     */
+    private const LEGACY_STARTING_PRICE_META_KEYS = [
+        'experience' => ['_experience_starting_price'],
+    ];
+
     public function render($attributes, $content = '', $block = null)
     {
         $isTemplateEditor = $this->isTemplateEditor();
@@ -157,7 +173,17 @@ class PostStartingPriceBlock extends Block
 
         if (empty($keys)) {
             $specific = '_' . $postType . '_price';
-            $keys = $specific === '_price' ? ['_price'] : ['_price', $specific];
+
+            $keys = array_merge(
+                self::LEGACY_STARTING_PRICE_META_KEYS[$postType] ?? [],
+                ['_jankx_price', '_jankx_regular_price']
+            );
+
+            if ($specific !== '_price') {
+                $keys[] = $specific;
+            }
+
+            $keys[] = '_price';
         }
 
         return (array) apply_filters('jankx/travel/post_starting_price/meta_keys', $keys, $postType);
