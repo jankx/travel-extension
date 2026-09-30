@@ -15,22 +15,6 @@ class PostStartingPriceBlock extends Block
 {
     protected $blockId = 'jankx/post-starting-price';
 
-    /**
-     * Starting price meta keys for post types that no longer declare a
-     * product in the registry, so createProduct() returns null and the
-     * generic fallback below kicks in.
-     *
-     * The experience post type was removed in favour of tour, but rows may
-     * still carry _experience_starting_price. The block is a *starting* price
-     * block, so that key must win over the sell price (_experience_price),
-     * which is only kept as a lower-priority fallback.
-     *
-     * @var array<string, string[]>
-     */
-    private const LEGACY_STARTING_PRICE_META_KEYS = [
-        'experience' => ['_experience_starting_price'],
-    ];
-
     public function render($attributes, $content = '', $block = null)
     {
         $isTemplateEditor = $this->isTemplateEditor();
@@ -45,14 +29,17 @@ class PostStartingPriceBlock extends Block
                 return '';
             }
 
-            // Dùng chung nguồn giá qua API Product của base-ecommerce để khớp
-            // chính xác với block "Add to Cart" (getPrice()). Fallback về meta
-            // legacy khi post type chưa được đăng ký product.
+            // Block này hiển thị giá khởi điểm ("Từ ..."), khác với giá bán
+            // mà Add to Cart thu. Đọc starting price key do PriceMetaRegistry
+            // khai báo cho post type trước; chỉ khi không có mới lấy
+            // getPrice() để khớp với giá thanh toán.
             $postType = get_post_type($postId);
             $product = ProductRegistry::get_instance()->createProduct($postId);
-            $price = $product
-                ? $product->getPrice()
-                : (float) self::getFirstMetaValue($postId, self::getPriceMetaKeys($postType ?: ''));
+            $price = (float) self::getFirstMetaValue($postId, self::getPriceMetaKeys($postType ?: ''));
+
+            if ($price <= 0.0 && $product) {
+                $price = $product->getPrice();
+            }
         }
 
         // Allow business extensions (e.g. date-based tour pricing) to swap the
@@ -162,29 +149,9 @@ class PostStartingPriceBlock extends Block
      */
     public static function getPriceMetaKeys(string $postType): array
     {
-        $keys = [];
-
-        if ($postType !== '' && class_exists('\Jankx\Extensions\Ecommerce\Registry\ProductRegistry')) {
-            $productClass = \Jankx\Extensions\Ecommerce\Registry\ProductRegistry::get_instance()->getProductClass($postType);
-            if ($productClass && is_subclass_of($productClass, '\Jankx\Extensions\Ecommerce\Abstracts\AbstractProduct')) {
-                $keys = array_merge([$productClass::PRICE_META_KEY], (array) $productClass::LEGACY_PRICE_META_KEYS);
-            }
-        }
-
-        if (empty($keys)) {
-            $specific = '_' . $postType . '_price';
-
-            $keys = array_merge(
-                self::LEGACY_STARTING_PRICE_META_KEYS[$postType] ?? [],
-                ['_jankx_price', '_jankx_regular_price']
-            );
-
-            if ($specific !== '_price') {
-                $keys[] = $specific;
-            }
-
-            $keys[] = '_price';
-        }
+        $keys = class_exists('\Jankx\Extensions\Ecommerce\Registry\PriceMetaRegistry')
+            ? \Jankx\Extensions\Ecommerce\Registry\PriceMetaRegistry::get_instance()->getStartingPriceKeys($postType)
+            : ['_' . $postType . '_price', '_price'];
 
         return (array) apply_filters('jankx/travel/post_starting_price/meta_keys', $keys, $postType);
     }
@@ -201,15 +168,9 @@ class PostStartingPriceBlock extends Block
      */
     public static function getPriceMetaKey(string $postType): string
     {
-        $key = '_price';
-
-        if ($postType !== '' && class_exists('\Jankx\Extensions\Ecommerce\Registry\ProductRegistry')) {
-            $productClass = \Jankx\Extensions\Ecommerce\Registry\ProductRegistry::get_instance()->getProductClass($postType);
-            if ($productClass && is_subclass_of($productClass, '\Jankx\Extensions\Ecommerce\Abstracts\AbstractProduct')) {
-                $legacy = (array) $productClass::LEGACY_PRICE_META_KEYS;
-                $key = !empty($legacy) ? $legacy[0] : $productClass::PRICE_META_KEY;
-            }
-        }
+        $key = class_exists('\Jankx\Extensions\Ecommerce\Registry\PriceMetaRegistry')
+            ? \Jankx\Extensions\Ecommerce\Registry\PriceMetaRegistry::get_instance()->getStartingPriceKey($postType)
+            : '_price';
 
         return (string) apply_filters('jankx/travel/post_starting_price/meta_key', $key, $postType);
     }
