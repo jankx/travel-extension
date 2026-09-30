@@ -26,7 +26,7 @@ class TourCategoryTaxonomy
                 'all_items'     => __('Tất cả loại tour', 'jankx'),
                 'edit_item'     => __('Sửa loại tour', 'jankx'),
                 'add_new_item'  => __('Thêm loại tour mới', 'jankx'),
-                'menu_name'     => __('Loại tour', 'jankx'),
+                'menu_name'     => __('Categories', 'jankx'),
             ],
             'hierarchical'      => true,
             'public'            => true,

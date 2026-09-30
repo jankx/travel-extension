@@ -5,19 +5,20 @@ namespace Jankx\Extensions\Travel;
 use Jankx\Extensions\AbstractExtension;
 use Jankx\Extensions\Travel\Admin\ThumbnailColumn;
 use Jankx\Extensions\Travel\PostTypes\TourPostType;
-use Jankx\Extensions\Travel\PostTypes\BookingRequestPostType;
 use Jankx\Extensions\Travel\Products\TourProduct;
 use Jankx\Extensions\Travel\Taxonomies\TourCategoryTaxonomy;
+use Jankx\Extensions\Travel\Taxonomies\TourDurationTaxonomy;
+use Jankx\Extensions\Travel\Taxonomies\TourTagTaxonomy;
 use Jankx\Extensions\Travel\Taxonomies\DestinationTaxonomy;
 use Jankx\Extensions\Travel\Meta\TourMetaBoxes;
-use Jankx\Extensions\Travel\Forms\BookingRequestHandler;
 use Jankx\Extensions\Travel\Query\TourQuery;
 
 /**
  * Travel Extension
  *
  * Adds travel-industry features to the Jankx theme: Destinations, Tours,
- * itineraries, departure dates, and a booking-request (quote request) form.
+ * itineraries and departure dates. Booking/ordering is handled by the
+ * base-ecommerce extension.
  *
  * @package Jankx\Extensions\Travel
  */
@@ -65,7 +66,6 @@ class TravelExtension extends AbstractExtension
     {
         // Post types & taxonomies must be registered on every request (admin + frontend + rest).
         (new TourPostType())->register();
-        (new BookingRequestPostType())->register();
 
         // Enable reviews for the tour post type via the review-system API.
         if (class_exists(\Jankx\Extensions\ReviewSystem\ReviewSystemExtension::class)) {
@@ -73,6 +73,8 @@ class TravelExtension extends AbstractExtension
         }
 
         (new TourCategoryTaxonomy())->register();
+        (new TourDurationTaxonomy())->register();
+        (new TourTagTaxonomy())->register();
         (new DestinationTaxonomy())->register();
 
         // Admin meta boxes for editing tour details.
@@ -80,9 +82,6 @@ class TravelExtension extends AbstractExtension
             (new TourMetaBoxes())->register();
             (new ThumbnailColumn())->register();
         }
-
-        // Frontend booking-request form handling (AJAX + REST).
-        (new BookingRequestHandler())->register();
 
         // Tour archive filtering (region, category, price, duration).
         (new TourQuery())->register();
