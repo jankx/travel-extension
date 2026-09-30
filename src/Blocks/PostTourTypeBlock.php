@@ -8,26 +8,11 @@
 namespace Jankx\Extensions\Travel\Blocks;
 
 use Jankx\Extensions\Travel\Block;
+use Jankx\Extensions\Travel\Taxonomies\TourTagTaxonomy;
 
 class PostTourTypeBlock extends Block
 {
     protected $blockId = 'jankx/post-tour-type';
-
-    const TOUR_TYPES = [
-        'adventure' => 'Phiêu lưu',
-        'cultural' => 'Văn hóa',
-        'nature' => 'Thiên nhiên',
-        'beach' => 'Biển đảo',
-        'city' => 'Thành phố',
-        'food' => 'Ẩm thực',
-        'wellness' => 'Sức khỏe',
-        'family' => 'Gia đình',
-        'luxury' => 'Sang trọng',
-        'budget' => 'Tiết kiệm',
-        'group' => 'Nhóm',
-        'solo' => 'Đơn thân',
-        'honeymoon' => 'Trăng mật',
-    ];
 
     public function render($attributes, $content = '', $block = null)
     {
@@ -48,19 +33,12 @@ class PostTourTypeBlock extends Block
             $tagName = 'span';
         }
 
-        $tourType = get_post_meta($postId, '_experience_tour_type', true);
+        // Source: the tour_tag taxonomy (Trải nghiệm). It is a flat tag taxonomy,
+        // so a tour can carry several experience groups at once.
         $tourTypeLabel = '';
-
-        if (!empty($tourType)) {
-            // Prefer taxonomy term name (supports custom labels)
-            $term = get_term_by('slug', $tourType, 'experience_type');
-            $tourTypeLabel = $term ? $term->name : (self::TOUR_TYPES[$tourType] ?? ucfirst($tourType));
-        } else {
-            // Fallback: try taxonomy experience_type
-            $terms = get_the_terms($postId, 'experience_type');
-            if ($terms && !is_wp_error($terms)) {
-                $tourTypeLabel = $terms[0]->name;
-            }
+        $terms = get_the_terms($postId, TourTagTaxonomy::TAXONOMY);
+        if ($terms && !is_wp_error($terms)) {
+            $tourTypeLabel = implode(', ', wp_list_pluck($terms, 'name'));
         }
 
         if (empty($tourTypeLabel)) {

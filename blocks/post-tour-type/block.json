@@ -5,7 +5,7 @@
 	"title": "Post Tour Type",
 	"category": "jankx",
 	"icon": "flag",
-	"description": "Hiển thị loại tour của post (tour, experience...).",
+	"description": "Hiển thị loại tour của post (tour).",
 	"textdomain": "jankx",
 	"parent": ["jankx/dynamic-data-template"],
 	"usesContext": ["postId", "postType"],

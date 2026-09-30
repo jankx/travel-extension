@@ -6,7 +6,7 @@ use Jankx\Extensions\Travel\PostTypes\TourPostType;
 
 /**
  * Registers the "destination" taxonomy (Điểm đến), e.g. Hà Nội, Đà Nẵng, Ninh Bình...
- * Shared by the tour, experience and place post types; the archive URL is /diem-den/<slug>/.
+ * Shared by the tour and place post types; the archive URL is /diem-den/<slug>/.
  */
 class DestinationTaxonomy
 {
@@ -15,15 +15,14 @@ class DestinationTaxonomy
     /** Post types that can be tagged with a destination. */
     const OBJECT_TYPES = [
         'tour',
-        'experience',
         'place',
     ];
 
     public function register(): void
     {
         add_action('init', [$this, 'register_taxonomy']);
-        // Link the taxonomy to post types registered after ours (experience/place
-        // live in separate extensions that may load later).
+        // Link the taxonomy to post types registered after ours (place may live
+        // in a separate extension that loads later).
         add_action('registered_post_type', [$this, 'register_for_object_type']);
     }
 

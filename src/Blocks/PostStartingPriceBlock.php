@@ -44,13 +44,7 @@ class PostStartingPriceBlock extends Block
         $price = apply_filters('jankx/travel/tour/starting_price', $price, $postId);
 
         // Giá lưu trong DB theo đơn vị mặc định của site (sourceCurrency).
-        // Nếu bài viết có meta _experience_currency riêng (giá nhập bằng ngoại tệ),
-        // dùng meta đó làm sourceCurrency; còn lại luôn lấy default currency.
-        $defaultCurrency = CurrencyManager::getDefaultCurrency();
-        $currencyMeta = get_post_meta($postId, '_experience_currency', true);
-        $sourceCurrency = (!$isTemplateEditor && !empty($currencyMeta))
-            ? strtoupper($currencyMeta)
-            : $defaultCurrency;
+        $sourceCurrency = CurrencyManager::getDefaultCurrency();
 
         $targetCurrency = CurrencyManager::getCurrentCurrency();
 
@@ -172,8 +166,8 @@ class PostStartingPriceBlock extends Block
     /**
      * Resolve the canonical meta key that admin should write for a post type.
      *
-     * Prefers the first legacy "sell price" key (e.g. _experience_price,
-     * _tour_price, _product_price) over the generic _jankx_price so external
+     * Prefers the first legacy "sell price" key (e.g. _tour_price,
+     * _product_price) over the generic _jankx_price so external
      * readers (search, tour pricing) keep seeing the updated value.
      *
      * @param string $postType

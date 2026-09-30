@@ -5,7 +5,7 @@
 	"title": "Post Starting Price",
 	"category": "jankx",
 	"icon": "money-alt",
-	"description": "Hiển thị giá khởi điểm của post (tour, experience...).",
+	"description": "Hiển thị giá khởi điểm của post (tour, place, product...).",
 	"textdomain": "jankx",
 	"usesContext": ["postId", "postType"],
 	"attributes": {

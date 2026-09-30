@@ -9,9 +9,9 @@ use Jankx\Extensions\Travel\PostTypes\TourPostType;
  * of experience they offer, e.g. "Trải nghiệm thiên nhiên", "Trải nghiệm văn hóa".
  *
  * Unlike `tour_category` / `tour_duration` this is a flat tag taxonomy, so a tour
- * can belong to several experience groups at once.
- *
- * The archive URL is /trai-nghiem/<slug>/.
+ * can belong to several experience groups at once. It has no rewrite of its own:
+ * it is used for tagging and filtering only, leaving /trai-nghiem/ free for the
+ * tour experience pages.
  */
 class TourTagTaxonomy
 {
@@ -60,10 +60,12 @@ class TourTagTaxonomy
             'show_admin_column' => true,
             'show_in_nav_menus' => true,
             'show_tagcloud'     => false,
-            'rewrite'           => ['slug' => 'trai-nghiem', 'with_front' => false],
+            'rewrite'           => false,
         ]);
 
-        add_action('init', [$this, 'seedDefaultTerms']);
+        // Called directly (not re-hooked to `init`): the taxonomy must exist
+        // before the terms can be inserted, and this runs on `init` already.
+        $this->seedDefaultTerms();
     }
 
     /**
