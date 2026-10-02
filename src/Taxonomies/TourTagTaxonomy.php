@@ -18,6 +18,12 @@ class TourTagTaxonomy
     const TAXONOMY = 'tour_tag';
 
     /**
+     * Bumped when $defaultTerms changes, so new tags get seeded on upgrade
+     * without re-checking them on every single page load.
+     */
+    private const SEED_VERSION = '1.0.1';
+
+    /**
      * Experience tags seeded on first run. slug => name.
      */
     private static array $defaultTerms = [
@@ -70,14 +76,31 @@ class TourTagTaxonomy
 
     /**
      * Create the built-in experience tags once, so editors can just pick them.
+     *
+     * Guarded by a version option and backed by a single bulk slug lookup:
+     * term_exists() is one query per slug, so this used to spend 11 SELECTs on
+     * every request just to conclude that nothing was missing.
      */
     public function seedDefaultTerms(): void
     {
+        if (get_option('jankx_tour_tag_seed_version') === self::SEED_VERSION) {
+            return;
+        }
+
+        $existingSlugs = get_terms([
+            'taxonomy'   => self::TAXONOMY,
+            'hide_empty' => false,
+            'fields'     => 'slugs',
+        ]);
+        $existingSlugs = is_wp_error($existingSlugs) ? [] : (array) $existingSlugs;
+
         foreach (self::$defaultTerms as $slug => $name) {
-            if (!term_exists($slug, self::TAXONOMY)) {
+            if (!in_array($slug, $existingSlugs, true)) {
                 wp_insert_term($name, self::TAXONOMY, ['slug' => $slug]);
             }
         }
+
+        update_option('jankx_tour_tag_seed_version', self::SEED_VERSION);
     }
 
     public static function getDefaultTerms(): array
