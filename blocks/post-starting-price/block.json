@@ -9,14 +9,6 @@
 	"textdomain": "jankx",
 	"usesContext": ["postId", "postType"],
 	"attributes": {
-		"prefix": {
-			"type": "string",
-			"default": "Từ "
-		},
-		"suffix": {
-			"type": "string",
-			"default": "/ người"
-		},
 		"showWhenEmpty": {
 			"type": "boolean",
 			"default": true
@@ -28,6 +20,10 @@
 		"tagName": {
 			"type": "string",
 			"default": "span"
+		},
+		"editorPreview": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

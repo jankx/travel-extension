@@ -12,4 +12,20 @@
 	.post-starting-price__suffix {
 		margin-left: 4px;
 	}
+
+	// Inner block core/paragraph và core/heading mang margin mặc định của
+	// theme, phá vỡ bố cục một dòng của khối giá.
+	.post-starting-price__prefix,
+	.post-starting-price__suffix {
+		> p,
+		> h1,
+		> h2,
+		> h3,
+		> h4,
+		> h5,
+		> h6 {
+			display: inline;
+			margin: 0;
+		}
+	}
 }

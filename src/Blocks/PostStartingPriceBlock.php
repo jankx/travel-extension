@@ -15,6 +15,24 @@ class PostStartingPriceBlock extends Block
 {
     protected $blockId = 'jankx/post-starting-price';
 
+    /** Inner block được gắn slot "trước giá". */
+    const SLOT_PREFIX = 'prefix';
+
+    /** Inner block được gắn slot "sau giá". */
+    const SLOT_SUFFIX = 'suffix';
+
+    /** Tên attribute mang slot, đăng ký ở editor qua filter blocks.registerBlockType. */
+    const SLOT_ATTR = 'jankxSlot';
+
+    /**
+     * Inner block không khai báo jankxSlot sẽ mặc định là prefix.
+     * core/heading mặc định là suffix vì heading là dạng nhãn phía sau giá
+     * ("/ người", "mỗi đoàn") chứ không phải tiền tố.
+     */
+    const DEFAULT_SLOT_BY_BLOCK = [
+        'core/heading' => self::SLOT_SUFFIX,
+    ];
+
     public function render($attributes, $content = '', $block = null)
     {
         $isTemplateEditor = $this->isTemplateEditor();
@@ -51,8 +69,6 @@ class PostStartingPriceBlock extends Block
 
         $targetCurrency = CurrencyManager::getCurrentCurrency();
 
-        $prefix = $attributes['prefix'] ?? 'Từ ';
-        $suffix = $attributes['suffix'] ?? '/ người';
         $showWhenEmpty = $attributes['showWhenEmpty'] ?? true;
         $emptyText = $attributes['emptyText'] ?? 'Liên hệ';
         $tagName = $attributes['tagName'] ?? 'span';
@@ -83,23 +99,74 @@ class PostStartingPriceBlock extends Block
             'style' => $this->buildInlineStyle($attributes),
         ]);
 
+        // Trong editor, ServerSideRender chỉ cần render con số giá; các
+        // prefix/suffix do InnerBlocks hiển thị nên bỏ qua ở đây để khỏi
+        // render trùng hai lần.
+        $editorPreview = !empty($attributes['editorPreview']);
+        [$prefixHtml, $suffixHtml] = $editorPreview ? ['', ''] : $this->renderSlotInnerBlocks($block);
+
         ob_start();
         ?>
         <<?php echo esc_attr($tagName); ?>         <?php echo $wrapperAttrs; ?>>
-            <?php
-            if (!empty($prefix)) {
-                echo '<span class="post-starting-price__prefix">' . esc_html($prefix) . '</span>';
-            }
-            ?><span
+            <?php echo $prefixHtml; ?>
+            <span
                 class="post-starting-price__price"><?php echo $formattedPrice; /* Đã bao gồm custom currency format từ CurrencyManager */ ?></span>
-            <?php
-            if (!empty($suffix)) {
-                echo '<span class="post-starting-price__suffix">' . esc_html($suffix) . '</span>';
-            }
-            ?>
+            <?php echo $suffixHtml; ?>
         </<?php echo esc_attr($tagName); ?>>
         <?php
         return ob_get_clean();
+    }
+
+    /**
+     * Render inner blocks, nhóm theo jankxSlot thành hai phần trước/sau giá.
+     *
+     * Inner blocks đến từ $block->parsed_block chứ không parse lại $content,
+     * vì $content chỉ là HTML đã gộp sẵn không còn thông tin slot.
+     *
+     * @param WP_Block|array|null $block
+     * @return array{0: string, 1: string} [html prefix, html suffix]
+     */
+    protected function renderSlotInnerBlocks($block): array
+    {
+        $slots = [
+            self::SLOT_PREFIX => '',
+            self::SLOT_SUFFIX => '',
+        ];
+
+        $innerBlocks = [];
+        if (is_object($block) && isset($block->parsed_block['innerBlocks'])) {
+            $innerBlocks = (array) $block->parsed_block['innerBlocks'];
+        } elseif (is_array($block) && isset($block['innerBlocks'])) {
+            $innerBlocks = (array) $block['innerBlocks'];
+        }
+
+        foreach ($innerBlocks as $innerBlock) {
+            $name = (string) ($innerBlock['blockName'] ?? '');
+            if ($name === '') {
+                continue;
+            }
+
+            $slot = self::DEFAULT_SLOT_BY_BLOCK[$name] ?? self::SLOT_PREFIX;
+            $attrSlot = (string) ($innerBlock['attrs'][self::SLOT_ATTR] ?? '');
+            if (in_array($attrSlot, [self::SLOT_PREFIX, self::SLOT_SUFFIX], true)) {
+                $slot = $attrSlot;
+            }
+
+            // render_block tự escape theo đặc tả của từng block, nên không
+            // esc_html ở đây (sẽ phá entity của core/paragraph).
+            $html = render_block($innerBlock);
+            if ($html === '') {
+                continue;
+            }
+
+            $slots[$slot] .= sprintf(
+                '<span class="post-starting-price__%s">%s</span>',
+                esc_attr($slot),
+                $html
+            );
+        }
+
+        return [$slots[self::SLOT_PREFIX], $slots[self::SLOT_SUFFIX]];
     }
 
     /**
