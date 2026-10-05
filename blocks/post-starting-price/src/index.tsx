@@ -1,4 +1,5 @@
-import { registerBlockType, addFilter } from '@wordpress/blocks';
+import { registerBlockType } from '@wordpress/blocks';
+import { addFilter } from '@wordpress/hooks';
 import {
 	useBlockProps,
 	InspectorControls,

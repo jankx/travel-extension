@@ -1,0 +1,46 @@
+.wp-block-jankx-post-starting-price .post-starting-price__prefix {
+  margin-right: 4px;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__price {
+  font-weight: 600;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__suffix {
+  margin-left: 4px;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__prefix > p,
+.wp-block-jankx-post-starting-price .post-starting-price__prefix > h1,
+.wp-block-jankx-post-starting-price .post-starting-price__prefix > h2,
+.wp-block-jankx-post-starting-price .post-starting-price__prefix > h3,
+.wp-block-jankx-post-starting-price .post-starting-price__prefix > h4,
+.wp-block-jankx-post-starting-price .post-starting-price__prefix > h5,
+.wp-block-jankx-post-starting-price .post-starting-price__prefix > h6,
+.wp-block-jankx-post-starting-price .post-starting-price__suffix > p,
+.wp-block-jankx-post-starting-price .post-starting-price__suffix > h1,
+.wp-block-jankx-post-starting-price .post-starting-price__suffix > h2,
+.wp-block-jankx-post-starting-price .post-starting-price__suffix > h3,
+.wp-block-jankx-post-starting-price .post-starting-price__suffix > h4,
+.wp-block-jankx-post-starting-price .post-starting-price__suffix > h5,
+.wp-block-jankx-post-starting-price .post-starting-price__suffix > h6 {
+  display: inline;
+  margin: 0;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__editor-slots {
+  padding: 8px;
+  border: 1px dashed #c3c4c7;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__editor-hint {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-style: italic;
+  color: #757575;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__editor-price {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+/*# sourceMappingURL=editor.css.map */
