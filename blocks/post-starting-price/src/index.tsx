@@ -7,6 +7,7 @@ import {
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
 import { PanelBody, TextControl, ToggleControl, SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import ServerSideRender from '@wordpress/server-side-render';
@@ -77,10 +78,26 @@ const withSlotControl = (BlockEdit: any) => (props: any) => {
 
 addFilter('editor.BlockEdit', 'jankx/post-starting-price/slot-control', withSlotControl);
 
-function Edit({ attributes, setAttributes }: any) {
+function Edit({ attributes, setAttributes, context }: any) {
 	const blockProps = useBlockProps({
 		style: buildInlineStyles(attributes),
 	});
+
+	const serverSideAttributes = useMemo(
+		() => ({ ...attributes, editorPreview: true }),
+		[attributes]
+	);
+
+	// Tối ưu ServerSideRender trong Query Loop / Template Loop:
+	// Nếu context.postId có tồn tại (đang được render trong Loop),
+	// truyền post_id vào urlQueryArgs để ServerSideRender render đúng post đó
+	// thay vì render post hiện tại đang được edit.
+	const urlQueryArgs = useMemo(() => {
+		if (context?.postId) {
+			return { post_id: context.postId };
+		}
+		return undefined;
+	}, [context?.postId]);
 
 	return (
 		<>
@@ -135,7 +152,8 @@ function Edit({ attributes, setAttributes }: any) {
 				<div className="post-starting-price__editor-price">
 					<ServerSideRender
 						block={metadata.name}
-						attributes={{ ...attributes, editorPreview: true }}
+						attributes={serverSideAttributes}
+						urlQueryArgs={urlQueryArgs}
 					/>
 				</div>
 			</div>
