@@ -78,6 +78,47 @@ const withSlotControl = (BlockEdit: any) => (props: any) => {
 
 addFilter('editor.BlockEdit', 'jankx/post-starting-price/slot-control', withSlotControl);
 
+// Thêm class is-jankx-slot-prefix/suffix vào wrapper của block con để CSS
+// editor sắp xếp thứ tự [prefix] [giá] [suffix] trên một dòng (order),
+// khớp với cách PHP renderSlotInnerBlocks gộp slot ở frontend.
+// core/heading mặc định suffix, còn lại prefix - giống DEFAULT_SLOT_BY_BLOCK.
+const withSlotOrderClass = (BlockListBlock: any) => (props: any) => {
+	const { clientId, name, attributes, className } = props;
+
+	const slot = useSelect((select: any) => {
+		if (!SLOT_BLOCKS.includes(name)) {
+			return null;
+		}
+		const parents = select(blockEditorStore).getBlockParents(clientId);
+		if (!parents?.length || select(blockEditorStore).getBlockName(parents[0]) !== metadata.name) {
+			return null;
+		}
+		const attrSlot = attributes?.[SLOT_ATTR];
+		if (attrSlot === SLOT_PREFIX || attrSlot === SLOT_SUFFIX) {
+			return attrSlot;
+		}
+		return name === 'core/heading' ? SLOT_SUFFIX : SLOT_PREFIX;
+	}, [clientId, name, attributes?.[SLOT_ATTR]]);
+
+	if (!slot) {
+		return <BlockListBlock {...props} />;
+	}
+
+	const slotClass = `is-jankx-slot-${slot}`;
+	return (
+		<BlockListBlock
+			{...props}
+			className={className ? `${className} ${slotClass}` : slotClass}
+		/>
+	);
+};
+
+addFilter(
+	'editor.BlockListBlock',
+	'jankx/post-starting-price/slot-order',
+	withSlotOrderClass
+);
+
 function Edit({ attributes, setAttributes, context }: any) {
 	const blockProps = useBlockProps({
 		style: buildInlineStyles(attributes),
@@ -89,15 +130,18 @@ function Edit({ attributes, setAttributes, context }: any) {
 	);
 
 	// Tối ưu ServerSideRender trong Query Loop / Template Loop:
-	// Nếu context.postId có tồn tại (đang được render trong Loop),
-	// truyền post_id vào urlQueryArgs để ServerSideRender render đúng post đó
-	// thay vì render post hiện tại đang được edit.
+	// post_id (REST block-renderer) set global $post nên PHP mới resolve
+	// được giá thật. Ưu tiên context.postId (Query Loop), fallback về post
+	// đang được sửa trong editor (post editor cấp cao nhất không có context).
+	const currentPostId = useSelect(
+		(select: any) => select('core/editor')?.getCurrentPostId?.() || 0,
+		[]
+	);
+
 	const urlQueryArgs = useMemo(() => {
-		if (context?.postId) {
-			return { post_id: context.postId };
-		}
-		return undefined;
-	}, [context?.postId]);
+		const postId = context?.postId || currentPostId;
+		return postId ? { post_id: postId } : undefined;
+	}, [context?.postId, currentPostId]);
 
 	return (
 		<>
@@ -129,13 +173,7 @@ function Edit({ attributes, setAttributes, context }: any) {
 			</InspectorControls>
 
 			<div {...blockProps}>
-				<div className="post-starting-price__editor-slots">
-					<p className="post-starting-price__editor-hint">
-						{__(
-							'Thêm Paragraph hoặc Heading làm prefix / suffix. Đổi vị trí trong Inspector của từng block con.',
-							'jankx'
-						)}
-					</p>
+				<div className="post-starting-price__slots">
 					<InnerBlocks
 						allowedBlocks={SLOT_BLOCKS}
 						template={[

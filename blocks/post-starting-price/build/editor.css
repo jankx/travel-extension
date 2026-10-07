@@ -1,0 +1,57 @@
+.wp-block-jankx-post-starting-price {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__slots,
+.wp-block-jankx-post-starting-price .block-editor-inner-blocks,
+.wp-block-jankx-post-starting-price .block-editor-block-list,
+.wp-block-jankx-post-starting-price .block-editor-block-list__layout {
+  display: contents;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__editor-price,
+.wp-block-jankx-post-starting-price .post-starting-price__editor-price > * {
+  display: contents;
+}
+.wp-block-jankx-post-starting-price .block-editor-block-list__block,
+.wp-block-jankx-post-starting-price .wp-block {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  align-self: baseline;
+}
+.wp-block-jankx-post-starting-price .block-editor-block-list__block > p,
+.wp-block-jankx-post-starting-price .block-editor-block-list__block > h1,
+.wp-block-jankx-post-starting-price .block-editor-block-list__block > h2,
+.wp-block-jankx-post-starting-price .block-editor-block-list__block > h3,
+.wp-block-jankx-post-starting-price .block-editor-block-list__block > h4,
+.wp-block-jankx-post-starting-price .block-editor-block-list__block > h5,
+.wp-block-jankx-post-starting-price .block-editor-block-list__block > h6 {
+  display: inline;
+  margin: 0;
+  width: auto;
+  max-width: none;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__editor-price > *,
+.wp-block-jankx-post-starting-price .post-starting-price__editor-price > * > * {
+  order: 2;
+}
+.wp-block-jankx-post-starting-price .post-starting-price__price {
+  order: 2;
+  font-weight: 600;
+}
+.wp-block-jankx-post-starting-price .is-jankx-slot-prefix {
+  order: 1;
+  margin-right: 4px;
+}
+.wp-block-jankx-post-starting-price .is-jankx-slot-suffix {
+  order: 3;
+  margin-left: 4px;
+}
+.wp-block-jankx-post-starting-price .block-editor-button-block-appender,
+.wp-block-jankx-post-starting-price .block-editor-default-appender,
+.wp-block-jankx-post-starting-price .block-editor-inserter {
+  order: 4;
+}
+
+/*# sourceMappingURL=editor.css.map */

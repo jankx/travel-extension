@@ -1,18 +1,37 @@
+// Editor canvas hiển thị đúng một dòng như frontend:
+// [prefix] [giá] [suffix] trên cùng baseline, không khung viền, không hint.
+
 .wp-block-jankx-post-starting-price {
-	.post-starting-price__prefix {
-		margin-right: 4px;
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+
+	// --- Bước 1: gỡ wrapper cấu trúc & reset chrome của block con ---
+	// Để block con (prefix/suffix) và giá (ServerSideRender) cùng tham gia
+	// flex row của khối cha, các wrapper InnerBlocks phải display:contents.
+	.post-starting-price__slots,
+	.block-editor-inner-blocks,
+	.block-editor-block-list,
+	.block-editor-block-list__layout {
+		display: contents;
 	}
 
-	.post-starting-price__price {
-		font-weight: 600;
+	// ServerSideRender: div[style=relative] > span.post-starting-price__price.
+	.post-starting-price__editor-price,
+	.post-starting-price__editor-price > * {
+		display: contents;
 	}
 
-	.post-starting-price__suffix {
-		margin-left: 4px;
+	// Reset margin/width mặc định của theme/editor để không phá một dòng.
+	.block-editor-block-list__block,
+	.wp-block {
+		width: auto;
+		max-width: none;
+		margin: 0;
+		align-self: baseline;
 	}
 
-	.post-starting-price__prefix,
-	.post-starting-price__suffix {
+	.block-editor-block-list__block {
 		> p,
 		> h1,
 		> h2,
@@ -22,27 +41,41 @@
 		> h6 {
 			display: inline;
 			margin: 0;
+			width: auto;
+			max-width: none;
 		}
 	}
 
-	.post-starting-price__editor-slots {
-		padding: 8px;
-		border: 1px dashed #c3c4c7;
-		border-radius: 4px;
-		margin-bottom: 8px;
+	// --- Bước 2: sắp thứ tự flex (rule sau thắng tie cùng specificity) ---
+
+	// Đảm bảo giá (và placeholder/spinner của SSR) luôn đứng thứ tự 2
+	// bất kể chiều sâu wrapper - toàn bộ đã được display:contents gỡ ra.
+	.post-starting-price__editor-price > *,
+	.post-starting-price__editor-price > * > * {
+		order: 2;
 	}
 
-	.post-starting-price__editor-hint {
-		margin: 0 0 6px;
-		font-size: 11px;
-		font-style: italic;
-		color: #757575;
+	.post-starting-price__price {
+		order: 2;
+		font-weight: 600;
 	}
 
-	.post-starting-price__editor-price {
-		display: inline-block;
-		padding: 2px 8px;
-		background: #f0f0f0;
-		border-radius: 3px;
+	// Vị trí slot - class thêm bởi filter editor.BlockListBlock,
+	// khớp với DEFAULT_SLOT_BY_BLOCK của PHP.
+	.is-jankx-slot-prefix {
+		order: 1;
+		margin-right: 4px;
+	}
+
+	.is-jankx-slot-suffix {
+		order: 3;
+		margin-left: 4px;
+	}
+
+	// Appender nằm ở cuối dòng, sau suffix.
+	.block-editor-button-block-appender,
+	.block-editor-default-appender,
+	.block-editor-inserter {
+		order: 4;
 	}
 }

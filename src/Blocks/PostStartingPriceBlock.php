@@ -36,17 +36,27 @@ class PostStartingPriceBlock extends Block
     public function render($attributes, $content = '', $block = null)
     {
         $isTemplateEditor = $this->isTemplateEditor();
+        $editorPreview = !empty($attributes['editorPreview']);
         $postId = 0;
         $product = null;
 
-        if ($isTemplateEditor) {
-            $price = $this->getMockPrice();
-        } else {
+        if (!$isTemplateEditor) {
             $postId = $this->resolvePostId($attributes, $block);
-            if (!$postId) {
-                return '';
-            }
 
+            // SSR trong site/template editor cũng truyền post_id (wp_template,
+            // wp_template_part) - các post type này không có giá thật nên
+            // hiển thị giá mock thay vì "Liên hệ".
+            if ($postId > 0 && in_array(get_post_type($postId), ['wp_template', 'wp_template_part'], true)) {
+                $isTemplateEditor = true;
+                $postId = 0;
+            }
+        }
+
+        if ($isTemplateEditor || ($editorPreview && !$postId)) {
+            $price = $this->getMockPrice();
+        } elseif (!$postId) {
+            return '';
+        } else {
             // Block này hiển thị giá khởi điểm ("Từ ..."), khác với giá bán
             // mà Add to Cart thu. Đọc starting price key do PriceMetaRegistry
             // khai báo cho post type trước; chỉ khi không có mới lấy
@@ -94,16 +104,23 @@ class PostStartingPriceBlock extends Block
             );
         }
 
+        // Trong editor, ServerSideRender chỉ trả về con số giá; prefix/suffix
+        // do InnerBlocks dựng trực tiếp trong canvas nên không render lại ở đây
+        // (tránh trùng lặp) - trả về đúng cấu trúc span giá như frontend để
+        // CSS editor flex xếp thành một dòng.
+        if ($editorPreview) {
+            return sprintf(
+                '<span class="post-starting-price__price">%s</span>',
+                $formattedPrice
+            );
+        }
+
         $wrapperAttrs = get_block_wrapper_attributes([
             'class' => 'wp-block-jankx-post-starting-price',
             'style' => $this->buildInlineStyle($attributes),
         ]);
 
-        // Trong editor, ServerSideRender chỉ cần render con số giá; các
-        // prefix/suffix do InnerBlocks hiển thị nên bỏ qua ở đây để khỏi
-        // render trùng hai lần.
-        $editorPreview = !empty($attributes['editorPreview']);
-        [$prefixHtml, $suffixHtml] = $editorPreview ? ['', ''] : $this->renderSlotInnerBlocks($block);
+        [$prefixHtml, $suffixHtml] = $this->renderSlotInnerBlocks($block);
 
         ob_start();
         ?>
@@ -318,13 +335,11 @@ class PostStartingPriceBlock extends Block
             return true;
         }
 
-        global $post;
-        if (
-            (is_admin() || (defined('REST_REQUEST') && REST_REQUEST)) &&
-            (empty($post) || empty($post->post_content))
-        ) {
-            return true;
-        }
+        // Không kiểm tra global $post rỗng ở đây: block-renderer REST của
+        // post editor không set global $post khi chưa có post_id, nhưng post
+        // editor phải hiển thị giá thật (post_id do JS truyền vào) chứ không
+        // phải giá mock. Trường hợp không resolve được post_id sẽ được xử lý
+        // trong render() qua editorPreview.
 
         return false;
     }
